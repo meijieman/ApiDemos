@@ -16,14 +16,14 @@
 
 package com.example.android.apis.view;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
-import android.widget.Button;
-import android.widget.ProgressBar;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.ProgressBar;
+
+import com.example.android.apis.R;
 
 
 /**
@@ -39,11 +39,11 @@ public class ProgressBar1 extends Activity {
         requestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.progressbar_1);
         setProgressBarVisibility(true);
-        
+
         final ProgressBar progressHorizontal = (ProgressBar) findViewById(R.id.progress_horizontal);
         setProgress(progressHorizontal.getProgress() * 100);
         setSecondaryProgress(progressHorizontal.getSecondaryProgress() * 100);
-        
+
         Button button = (Button) findViewById(R.id.increase);
         button.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
@@ -79,6 +79,6 @@ public class ProgressBar1 extends Activity {
                 setSecondaryProgress(100 * progressHorizontal.getSecondaryProgress());
             }
         });
-        
+
     }
 }

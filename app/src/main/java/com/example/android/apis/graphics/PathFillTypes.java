@@ -21,7 +21,10 @@ package com.example.android.apis.graphics;
 //import com.example.android.apis.R;
 
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.os.Bundle;
 import android.view.View;
 
@@ -58,7 +61,8 @@ public class PathFillTypes extends GraphicsActivity {
             canvas.restore();
         }
 
-        @Override protected void onDraw(Canvas canvas) {
+        @Override
+        protected void onDraw(Canvas canvas) {
             Paint paint = mPaint;
 
             canvas.drawColor(0xFFCCCCCC);

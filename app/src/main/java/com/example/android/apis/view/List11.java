@@ -22,28 +22,27 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 /**
- * This example shows how to use choice mode on a list. This list is 
+ * This example shows how to use choice mode on a list. This list is
  * in CHOICE_MODE_MULTIPLE mode, which means the items behave like
  * checkboxes.
  */
 public class List11 extends ListActivity {
-    
+
+    private static final String[] GENRES = new String[]{
+            "Action", "Adventure", "Animation", "Children", "Comedy", "Documentary", "Drama",
+            "Foreign", "History", "Independent", "Romance", "Sci-Fi", "Television", "Thriller"
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setListAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_multiple_choice, GENRES));
-        
+
         final ListView listView = getListView();
 
         listView.setItemsCanFocus(false);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
     }
-
-
-    private static final String[] GENRES = new String[] {
-        "Action", "Adventure", "Animation", "Children", "Comedy", "Documentary", "Drama",
-        "Foreign", "History", "Independent", "Romance", "Sci-Fi", "Television", "Thriller"
-    };
 }

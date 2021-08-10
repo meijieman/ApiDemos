@@ -16,8 +16,6 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -37,6 +35,8 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.android.apis.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -159,7 +159,7 @@ public class VoiceRecognition extends Activity implements OnClickListener {
 
         SpinnerAdapter adapter = new ArrayAdapter<CharSequence>(this,
                 android.R.layout.simple_spinner_item, languages.toArray(
-                        new String[languages.size()]));
+                new String[languages.size()]));
         mSupportedLanguageView.setAdapter(adapter);
     }
 
@@ -170,7 +170,7 @@ public class VoiceRecognition extends Activity implements OnClickListener {
 
     /**
      * Handles the response of the broadcast request about the recognizer supported languages.
-     *
+     * <p>
      * The receiver is required only if the application wants to do recognition in a specific
      * language.
      */

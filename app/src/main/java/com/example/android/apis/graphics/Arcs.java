@@ -21,7 +21,10 @@ package com.example.android.apis.graphics;
 //import com.example.android.apis.R;
 
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.view.View;
 
@@ -34,6 +37,8 @@ public class Arcs extends GraphicsActivity {
     }
 
     private static class SampleView extends View {
+        private static final float SWEEP_INC = 2;
+        private static final float START_INC = 15;
         private Paint[] mPaints;
         private Paint mFramePaint;
         private boolean[] mUseCenters;
@@ -42,9 +47,6 @@ public class Arcs extends GraphicsActivity {
         private float mStart;
         private float mSweep;
         private int mBigIndex;
-
-        private static final float SWEEP_INC = 2;
-        private static final float START_INC = 15;
 
         public SampleView(Context context) {
             super(context);
@@ -75,8 +77,8 @@ public class Arcs extends GraphicsActivity {
 
             mBigOval = new RectF(40, 10, 280, 250);
 
-            mOvals[0] = new RectF( 10, 270,  70, 330);
-            mOvals[1] = new RectF( 90, 270, 150, 330);
+            mOvals[0] = new RectF(10, 270, 70, 330);
+            mOvals[1] = new RectF(90, 270, 150, 330);
             mOvals[2] = new RectF(170, 270, 230, 330);
             mOvals[3] = new RectF(250, 270, 310, 330);
 
@@ -92,11 +94,12 @@ public class Arcs extends GraphicsActivity {
             canvas.drawArc(oval, mStart, mSweep, useCenter, paint);
         }
 
-        @Override protected void onDraw(Canvas canvas) {
+        @Override
+        protected void onDraw(Canvas canvas) {
             canvas.drawColor(Color.WHITE);
 
             drawArcs(canvas, mBigOval, mUseCenters[mBigIndex],
-                     mPaints[mBigIndex]);
+                    mPaints[mBigIndex]);
 
             for (int i = 0; i < 4; i++) {
                 drawArcs(canvas, mOvals[i], mUseCenters[i], mPaints[i]);

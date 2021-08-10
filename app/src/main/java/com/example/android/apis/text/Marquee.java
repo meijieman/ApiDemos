@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2007 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,16 +16,16 @@
 
 package com.example.android.apis.text;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.os.Bundle;
+
+import com.example.android.apis.R;
 
 public class Marquee extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         setContentView(R.layout.marquee);
     }
 }

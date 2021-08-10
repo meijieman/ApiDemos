@@ -17,7 +17,9 @@
 package com.example.android.apis.graphics;
 
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -35,16 +37,14 @@ public class UnicodeChart extends GraphicsActivity {
     }
 
     private static class SampleView extends View {
-        private Paint mBigCharPaint;
-        private Paint mLabelPaint;
-        private final char[] mChars = new char[256];
-        private final float[] mPos = new float[512];
-
-        private int mBase;
-
         private static final int XMUL = 20;
         private static final int YMUL = 28;
         private static final int YBASE = 18;
+        private final char[] mChars = new char[256];
+        private final float[] mPos = new float[512];
+        private Paint mBigCharPaint;
+        private Paint mLabelPaint;
+        private int mBase;
 
         public SampleView(Context context) {
             super(context);
@@ -83,22 +83,24 @@ public class UnicodeChart extends GraphicsActivity {
             char[] chars = mChars;
             for (int i = 0; i < 256; i++) {
                 int unichar = base + i;
-                chars[i] = (char)unichar;
+                chars[i] = (char) unichar;
 
                 canvas.drawText(Integer.toHexString(unichar),
-                                computeX(i), computeY(i), mLabelPaint);
+                        computeX(i), computeY(i), mLabelPaint);
             }
             canvas.drawPosText(chars, 0, 256, mPos, mBigCharPaint);
         }
 
-        @Override protected void onDraw(Canvas canvas) {
+        @Override
+        protected void onDraw(Canvas canvas) {
             canvas.drawColor(Color.WHITE);
 
             canvas.translate(0, 1);
             drawChart(canvas, mBase * 256);
         }
 
-        @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+        @Override
+        public boolean onKeyDown(int keyCode, KeyEvent event) {
             switch (keyCode) {
                 case KeyEvent.KEYCODE_DPAD_LEFT:
                     if (mBase > 0) {

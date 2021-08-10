@@ -16,8 +16,6 @@
 
 package com.example.android.apis.media.projection;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +38,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.example.android.apis.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,10 +47,10 @@ public class MediaProjectionDemo extends Activity {
     private static final String TAG = "MediaProjectionDemo";
     private static final int PERMISSION_CODE = 1;
     private static final List<Resolution> RESOLUTIONS = new ArrayList<Resolution>() {{
-        add(new Resolution(640,360));
-        add(new Resolution(960,540));
-        add(new Resolution(1366,768));
-        add(new Resolution(1600,900));
+        add(new Resolution(640, 360));
+        add(new Resolution(960, 540));
+        add(new Resolution(1366, 768));
+        add(new Resolution(1600, 900));
     }};
 
     private int mScreenDensity;
@@ -78,7 +78,7 @@ public class MediaProjectionDemo extends Activity {
         mSurfaceView = (SurfaceView) findViewById(R.id.surface);
         mSurface = mSurfaceView.getHolder().getSurface();
         mProjectionManager =
-            (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+                (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
 
         ArrayAdapter<Resolution> arrayAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_list_item_1, RESOLUTIONS);
@@ -161,6 +161,21 @@ public class MediaProjectionDemo extends Activity {
         mVirtualDisplay.resize(mDisplayWidth, mDisplayHeight, mScreenDensity);
     }
 
+    private static class Resolution {
+        int x;
+        int y;
+
+        public Resolution(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public String toString() {
+            return x + "x" + y;
+        }
+    }
+
     private class ResolutionSelector implements Spinner.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
@@ -212,21 +227,6 @@ public class MediaProjectionDemo extends Activity {
             if (!mScreenSharing) {
                 stopScreenSharing();
             }
-        }
-    }
-
-    private static class Resolution {
-        int x;
-        int y;
-
-        public Resolution(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public String toString() {
-            return x + "x" + y;
         }
     }
 }

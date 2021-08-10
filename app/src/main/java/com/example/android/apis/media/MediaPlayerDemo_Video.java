@@ -16,8 +16,6 @@
 
 package com.example.android.apis.media;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -31,12 +29,20 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
+import com.example.android.apis.R;
+
 
 public class MediaPlayerDemo_Video extends Activity implements
         OnBufferingUpdateListener, OnCompletionListener,
         OnPreparedListener, OnVideoSizeChangedListener, SurfaceHolder.Callback {
 
     private static final String TAG = "MediaPlayerDemo";
+    private static final String MEDIA = "media";
+    private static final int LOCAL_AUDIO = 1;
+    private static final int STREAM_AUDIO = 2;
+    private static final int RESOURCES_AUDIO = 3;
+    private static final int LOCAL_VIDEO = 4;
+    private static final int STREAM_VIDEO = 5;
     private int mVideoWidth;
     private int mVideoHeight;
     private MediaPlayer mMediaPlayer;
@@ -44,17 +50,10 @@ public class MediaPlayerDemo_Video extends Activity implements
     private SurfaceHolder holder;
     private String path;
     private Bundle extras;
-    private static final String MEDIA = "media";
-    private static final int LOCAL_AUDIO = 1;
-    private static final int STREAM_AUDIO = 2;
-    private static final int RESOURCES_AUDIO = 3;
-    private static final int LOCAL_VIDEO = 4;
-    private static final int STREAM_VIDEO = 5;
     private boolean mIsVideoSizeKnown = false;
     private boolean mIsVideoReadyToBePlayed = false;
 
     /**
-     * 
      * Called when the activity is first created.
      */
     @Override
@@ -99,7 +98,7 @@ public class MediaPlayerDemo_Video extends Activity implements
                      * contents" which basically means: 1. the movie atom has to
                      * precede all the media data atoms. 2. The clip has to be
                      * reasonably interleaved.
-                     * 
+                     *
                      */
                     path = "";
                     if (path == "") {

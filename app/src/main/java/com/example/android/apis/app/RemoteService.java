@@ -16,9 +16,6 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-import com.orhanobut.logger.Logger;
-
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -41,6 +38,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.apis.R;
+import com.orhanobut.logger.Logger;
+
 // Need the following import to get access to the app resources, since this
 // class is in a sub-package.
 
@@ -50,13 +50,14 @@ import android.widget.Toast;
  * process, we must use IPC to interact with it.  The
  * {@link Controller} and {@link Binding} classes
  * show how to interact with the service.
- * 
+ *
  * <p>Note that most applications <strong>do not</strong> need to deal with
  * the complexity shown here.  If your application simply has a service
  * running in its own process, the {@link LocalService} sample shows a much
  * simpler way to interact with it.
  */
 public class RemoteService extends Service {
+    private static final int REPORT_MSG = 1;
     /**
      * This is a list of callbacks that have been registered with the
      * service.  Note that this is package scoped (instead of private) so
@@ -64,17 +65,77 @@ public class RemoteService extends Service {
      */
     final RemoteCallbackList<IRemoteServiceCallback> mCallbacks
             = new RemoteCallbackList<>();
-    
+    /**
+     * The IRemoteInterface is defined through IDL
+     */
+    private final IRemoteService.Stub mBinder = new IRemoteService.Stub() {
+        public void registerCallback(IRemoteServiceCallback cb) {
+            Logger.d("registerCallback", cb);
+            if (cb != null) mCallbacks.register(cb);
+        }
+
+        public void unregisterCallback(IRemoteServiceCallback cb) {
+            Logger.d("unregisterCallback:", cb);
+            if (cb != null) mCallbacks.unregister(cb);
+        }
+    };
+    /**
+     * A secondary interface to the service.
+     */
+    private final ISecondary.Stub mSecondaryBinder = new ISecondary.Stub() {
+        public int getPid() {
+            return Process.myPid();
+        }
+
+        public void basicTypes(int anInt, long aLong, boolean aBoolean,
+                               float aFloat, double aDouble, String aString) {
+        }
+    };
     int mValue = 0;
+    /**
+     * Our Handler used to execute operations on the main thread.  This is used
+     * to schedule increments of our value.
+     */
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+
+                // It is time to bump the value!
+                case REPORT_MSG: {
+                    // Up it goes.
+                    int value = ++mValue;
+
+                    // Broadcast to all clients the new value.
+                    final int N = mCallbacks.beginBroadcast();
+                    for (int i = 0; i < N; i++) {
+                        try {
+                            mCallbacks.getBroadcastItem(i).valueChanged(value);
+                        } catch (RemoteException e) {
+                            // The RemoteCallbackList will take care of removing
+                            // the dead object for us.
+                        }
+                    }
+                    mCallbacks.finishBroadcast();
+
+                    // Repeat every 1 second.
+                    sendMessageDelayed(obtainMessage(REPORT_MSG), 1 * 1000);
+                }
+                break;
+                default:
+                    super.handleMessage(msg);
+            }
+        }
+    };
     NotificationManager mNM;
-    
+
     @Override
     public void onCreate() {
-        mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         // Display a notification about us starting.
         showNotification();
-        
+
         // While this service is running, it will continually increment a
         // number.  Send the first message that is used to perform the
         // increment.
@@ -87,6 +148,7 @@ public class RemoteService extends Service {
         Logger.d("RemoteService", "Received start id " + startId + ": " + intent);
         return START_NOT_STICKY;
     }
+// END_INCLUDE(exposing_a_service)
 
     @Override
     public void onDestroy() {
@@ -95,16 +157,16 @@ public class RemoteService extends Service {
 
         // Tell the user we stopped.
         Toast.makeText(this, R.string.remote_service_stopped, Toast.LENGTH_SHORT).show();
-        
+
         // Unregister all callbacks.
         mCallbacks.kill();
-        
+
         // Remove the next pending message to increment the counter, stopping
         // the increment loop.
         mHandler.removeMessages(REPORT_MSG);
     }
-    
-// BEGIN_INCLUDE(exposing_a_service)
+
+    // BEGIN_INCLUDE(exposing_a_service)
     @Override
     public IBinder onBind(Intent intent) {
         // Select the interface to return.  If your service only implements
@@ -120,73 +182,10 @@ public class RemoteService extends Service {
         return null;
     }
 
-    /**
-     * The IRemoteInterface is defined through IDL
-     */
-    private final IRemoteService.Stub mBinder = new IRemoteService.Stub() {
-        public void registerCallback(IRemoteServiceCallback cb) {
-            Logger.d("registerCallback",cb);
-            if (cb != null) mCallbacks.register(cb);
-        }
-        public void unregisterCallback(IRemoteServiceCallback cb) {
-            Logger.d("unregisterCallback:",cb);
-            if (cb != null) mCallbacks.unregister(cb);
-        }
-    };
-
-    /**
-     * A secondary interface to the service.
-     */
-    private final ISecondary.Stub mSecondaryBinder = new ISecondary.Stub() {
-        public int getPid() {
-            return Process.myPid();
-        }
-        public void basicTypes(int anInt, long aLong, boolean aBoolean,
-                float aFloat, double aDouble, String aString) {
-        }
-    };
-// END_INCLUDE(exposing_a_service)
-    
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         Toast.makeText(this, "Task removed: " + rootIntent, Toast.LENGTH_LONG).show();
     }
-    
-    private static final int REPORT_MSG = 1;
-
-    /**
-     * Our Handler used to execute operations on the main thread.  This is used
-     * to schedule increments of our value.
-     */
-    private final Handler mHandler = new Handler() {
-        @Override public void handleMessage(Message msg) {
-            switch (msg.what) {
-                
-                // It is time to bump the value!
-                case REPORT_MSG: {
-                    // Up it goes.
-                    int value = ++mValue;
-                    
-                    // Broadcast to all clients the new value.
-                    final int N = mCallbacks.beginBroadcast();
-                    for (int i=0; i<N; i++) {
-                        try {
-                            mCallbacks.getBroadcastItem(i).valueChanged(value);
-                        } catch (RemoteException e) {
-                            // The RemoteCallbackList will take care of removing
-                            // the dead object for us.
-                        }
-                    }
-                    mCallbacks.finishBroadcast();
-                    
-                    // Repeat every 1 second.
-                    sendMessageDelayed(obtainMessage(REPORT_MSG), 1*1000);
-                } break;
-                default:
-                    super.handleMessage(msg);
-            }
-        }
-    };
 
     /**
      * Show a notification while this service is running.
@@ -213,32 +212,19 @@ public class RemoteService extends Service {
         // We use a string id because it is a unique number.  We use it later to cancel.
         mNM.notify(R.string.remote_service_started, notification);
     }
-    
+
     // ----------------------------------------------------------------------
-    
+
     /**
      * <p>Example of explicitly starting and stopping the remove service.
      * This demonstrates the implementation of a service that runs in a different
      * process than the rest of the application, which is explicitly started and stopped
      * as desired.</p>
-     * 
+     *
      * <p>Note that this is implemented as an inner class only keep the sample
      * all together; typically this code would appear in some separate class.
      */
     public static class Controller extends Activity {
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
-            setContentView(R.layout.remote_service_controller);
-
-            // Watch for button clicks.
-            Button button = (Button)findViewById(R.id.start);
-            button.setOnClickListener(mStartListener);
-            button = (Button)findViewById(R.id.stop);
-            button.setOnClickListener(mStopListener);
-        }
-
         private OnClickListener mStartListener = new OnClickListener() {
             public void onClick(View v) {
                 // Make sure the service is started.  It will continue running
@@ -249,7 +235,6 @@ public class RemoteService extends Service {
                 startService(new Intent(Controller.this, RemoteService.class));
             }
         };
-
         private OnClickListener mStopListener = new OnClickListener() {
             public void onClick(View v) {
                 // Cancel a previous call to startService().  Note that the
@@ -258,106 +243,53 @@ public class RemoteService extends Service {
                 stopService(new Intent(Controller.this, RemoteService.class));
             }
         };
-    }
-    
-    // ----------------------------------------------------------------------
-    
-    /**
-     * Example of binding and unbinding to the remote service.
-     * This demonstrates the implementation of a service which the client will
-     * bind to, interacting with it through an aidl interface.</p>
-     * 
-     * <p>Note that this is implemented as an inner class only keep the sample
-     * all together; typically this code would appear in some separate class.
-     */
- // BEGIN_INCLUDE(calling_a_service)
-    public static class Binding extends Activity {
 
-        //IRemoteService.java 根据 IRemoteService.aidl 自动生成
-        /** The primary interface we will be calling on the service. */
-        IRemoteService mService = null;
-        /** Another interface we use on the service. */
-        ISecondary mSecondaryService = null;
-        
-        Button mKillButton;
-        TextView mCallbackText;
-
-        private boolean mIsBound;
-
-        /**
-         * Standard initialization of this activity.  Set up the UI, then wait
-         * for the user to poke it before doing anything.
-         */
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            setContentView(R.layout.remote_service_binding);
+            setContentView(R.layout.remote_service_controller);
 
             // Watch for button clicks.
-            Button button = (Button)findViewById(R.id.bind);
-            button.setOnClickListener(mBindListener);
-            button = (Button)findViewById(R.id.unbind);
-            button.setOnClickListener(mUnbindListener);
-            mKillButton = (Button)findViewById(R.id.kill);
-            mKillButton.setOnClickListener(mKillListener);
-            mKillButton.setEnabled(false);
-            
-            mCallbackText = (TextView)findViewById(R.id.callback);
-            mCallbackText.setText("Not attached.");
+            Button button = (Button) findViewById(R.id.start);
+            button.setOnClickListener(mStartListener);
+            button = (Button) findViewById(R.id.stop);
+            button.setOnClickListener(mStopListener);
         }
+    }
 
+    // ----------------------------------------------------------------------
+
+    /**
+     * Example of binding and unbinding to the remote service.
+     * This demonstrates the implementation of a service which the client will
+     * bind to, interacting with it through an aidl interface.</p>
+     *
+     * <p>Note that this is implemented as an inner class only keep the sample
+     * all together; typically this code would appear in some separate class.
+     */
+    // BEGIN_INCLUDE(calling_a_service)
+    public static class Binding extends Activity {
+
+        //IRemoteService.java 根据 IRemoteService.aidl 自动生成
+        private static final int BUMP_MSG = 1;
         /**
-         * Class for interacting with the main interface of the service.
+         * The primary interface we will be calling on the service.
          */
-        private ServiceConnection mConnection = new ServiceConnection() {
-            public void onServiceConnected(ComponentName className,
-                    IBinder service) {
-                // This is called when the connection with the service has been
-                // established, giving us the service object we can use to
-                // interact with the service.  We are communicating with our
-                // service through an IDL interface, so get a client-side
-                // representation of that from the raw service object.
-                mService = IRemoteService.Stub.asInterface(service);
-                mKillButton.setEnabled(true);
-                mCallbackText.setText("Attached.");
-                Logger.d("RemoteService,ServiceConnection,onServiceConnected");
-                // We want to monitor the service for as long as we are
-                // connected to it.
-                try {
-                    mService.registerCallback(mCallback);
-                } catch (RemoteException e) {
-                    // In this case the service has crashed before we could even
-                    // do anything with it; we can count on soon being
-                    // disconnected (and then reconnected if it can be restarted)
-                    // so there is no need to do anything here.
-                }
-                
-                // As part of the sample, tell the user what happened.
-                Toast.makeText(Binding.this, R.string.remote_service_connected,
-                        Toast.LENGTH_SHORT).show();
-            }
-
-            public void onServiceDisconnected(ComponentName className) {
-                // This is called when the connection with the service has been
-                // unexpectedly disconnected -- that is, its process ed.
-                Logger.d("onServiceDisconnected,className=%s",className);
-                mService = null;
-                mKillButton.setEnabled(false);
-                mCallbackText.setText("Disconnected.");
-
-                // As part of the sample, tell the user what happened.
-                Toast.makeText(Binding.this, R.string.remote_service_disconnected,
-                        Toast.LENGTH_SHORT).show();
-            }
-        };
-
+        IRemoteService mService = null;
+        /**
+         * Another interface we use on the service.
+         */
+        ISecondary mSecondaryService = null;
+        Button mKillButton;
+        TextView mCallbackText;
+        private boolean mIsBound;
         /**
          * Class for interacting with the secondary interface of the service.
          */
         private ServiceConnection mSecondaryConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className,
-                    IBinder service) {
+                                           IBinder service) {
                 // Connecting to a secondary interface is the same as any
                 // other interface.
                 mSecondaryService = ISecondary.Stub.asInterface(service);
@@ -369,7 +301,6 @@ public class RemoteService extends Service {
                 mKillButton.setEnabled(false);
             }
         };
-
         private OnClickListener mBindListener = new OnClickListener() {
             public void onClick(View v) {
                 // Establish a couple connections with the service, binding
@@ -385,31 +316,6 @@ public class RemoteService extends Service {
                 mCallbackText.setText("Binding.");
             }
         };
-
-        private OnClickListener mUnbindListener = new OnClickListener() {
-            public void onClick(View v) {
-                if (mIsBound) {
-                    // If we have received the service, and hence registered with
-                    // it, then now is the time to unregister.
-                    if (mService != null) {
-                        try {
-                            mService.unregisterCallback(mCallback);
-                        } catch (RemoteException e) {
-                            // There is nothing special we need to do if the service
-                            // has crashed.
-                        }
-                    }
-                    
-                    // Detach our existing connection.
-                    unbindService(mConnection);
-                    unbindService(mSecondaryConnection);
-                    mKillButton.setEnabled(false);
-                    mIsBound = false;
-                    mCallbackText.setText("Unbinding.");
-                }
-            }
-        };
-
         private OnClickListener mKillListener = new OnClickListener() {
             public void onClick(View v) {
                 // To kill the process hosting our service, we need to know its
@@ -439,11 +345,19 @@ public class RemoteService extends Service {
                 }
             }
         };
-        
-        // ----------------------------------------------------------------------
-        // Code showing how to deal with callbacks.
-        // ----------------------------------------------------------------------
-        
+        private Handler mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case BUMP_MSG:
+                        mCallbackText.setText("Received from service: " + msg.arg1);
+                        break;
+                    default:
+                        super.handleMessage(msg);
+                }
+            }
+
+        };
         /**
          * This implementation is used to receive callbacks from the remote
          * service.
@@ -457,25 +371,104 @@ public class RemoteService extends Service {
              * to update the UI, we need to use a Handler to hop over there.
              */
             public void valueChanged(int value) {
-                Logger.d("IRemoteServiceCallback,valueChanged,value=%d",value);
+                Logger.d("IRemoteServiceCallback,valueChanged,value=%d", value);
                 mHandler.sendMessage(mHandler.obtainMessage(BUMP_MSG, value, 0));
             }
         };
-        
-        private static final int BUMP_MSG = 1;
-        
-        private Handler mHandler = new Handler() {
-            @Override public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case BUMP_MSG:
-                        mCallbackText.setText("Received from service: " + msg.arg1);
-                        break;
-                    default:
-                        super.handleMessage(msg);
+
+        // ----------------------------------------------------------------------
+        // Code showing how to deal with callbacks.
+        // ----------------------------------------------------------------------
+        /**
+         * Class for interacting with the main interface of the service.
+         */
+        private ServiceConnection mConnection = new ServiceConnection() {
+            public void onServiceConnected(ComponentName className,
+                                           IBinder service) {
+                // This is called when the connection with the service has been
+                // established, giving us the service object we can use to
+                // interact with the service.  We are communicating with our
+                // service through an IDL interface, so get a client-side
+                // representation of that from the raw service object.
+                mService = IRemoteService.Stub.asInterface(service);
+                mKillButton.setEnabled(true);
+                mCallbackText.setText("Attached.");
+                Logger.d("RemoteService,ServiceConnection,onServiceConnected");
+                // We want to monitor the service for as long as we are
+                // connected to it.
+                try {
+                    mService.registerCallback(mCallback);
+                } catch (RemoteException e) {
+                    // In this case the service has crashed before we could even
+                    // do anything with it; we can count on soon being
+                    // disconnected (and then reconnected if it can be restarted)
+                    // so there is no need to do anything here.
+                }
+
+                // As part of the sample, tell the user what happened.
+                Toast.makeText(Binding.this, R.string.remote_service_connected,
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            public void onServiceDisconnected(ComponentName className) {
+                // This is called when the connection with the service has been
+                // unexpectedly disconnected -- that is, its process ed.
+                Logger.d("onServiceDisconnected,className=%s", className);
+                mService = null;
+                mKillButton.setEnabled(false);
+                mCallbackText.setText("Disconnected.");
+
+                // As part of the sample, tell the user what happened.
+                Toast.makeText(Binding.this, R.string.remote_service_disconnected,
+                        Toast.LENGTH_SHORT).show();
+            }
+        };
+        private OnClickListener mUnbindListener = new OnClickListener() {
+            public void onClick(View v) {
+                if (mIsBound) {
+                    // If we have received the service, and hence registered with
+                    // it, then now is the time to unregister.
+                    if (mService != null) {
+                        try {
+                            mService.unregisterCallback(mCallback);
+                        } catch (RemoteException e) {
+                            // There is nothing special we need to do if the service
+                            // has crashed.
+                        }
+                    }
+
+                    // Detach our existing connection.
+                    unbindService(mConnection);
+                    unbindService(mSecondaryConnection);
+                    mKillButton.setEnabled(false);
+                    mIsBound = false;
+                    mCallbackText.setText("Unbinding.");
                 }
             }
-            
         };
+
+        /**
+         * Standard initialization of this activity.  Set up the UI, then wait
+         * for the user to poke it before doing anything.
+         */
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            setContentView(R.layout.remote_service_binding);
+
+            // Watch for button clicks.
+            Button button = (Button) findViewById(R.id.bind);
+            button.setOnClickListener(mBindListener);
+            button = (Button) findViewById(R.id.unbind);
+            button.setOnClickListener(mUnbindListener);
+            mKillButton = (Button) findViewById(R.id.kill);
+            mKillButton.setOnClickListener(mKillListener);
+            mKillButton.setEnabled(false);
+
+            mCallbackText = (TextView) findViewById(R.id.callback);
+            mCallbackText.setText("Not attached.");
+        }
     }
 // END_INCLUDE(calling_a_service)
 
@@ -484,11 +477,145 @@ public class RemoteService extends Service {
     /**
      * Examples of behavior of different bind flags.</p>
      */
- // BEGIN_INCLUDE(calling_a_service)
+    // BEGIN_INCLUDE(calling_a_service)
     public static class BindingOptions extends Activity {
         ServiceConnection mCurConnection;
         TextView mCallbackText;
         Intent mBindIntent;
+        private OnClickListener mBindNormalListener = new OnClickListener() {
+            public void onClick(View v) {
+                if (mCurConnection != null) {
+                    unbindService(mCurConnection);
+                    mCurConnection = null;
+                }
+                ServiceConnection conn = new MyServiceConnection();
+                if (bindService(mBindIntent, conn, Context.BIND_AUTO_CREATE)) {
+                    mCurConnection = conn;
+                }
+            }
+        };
+        private OnClickListener mBindNotForegroundListener = new OnClickListener() {
+            public void onClick(View v) {
+                if (mCurConnection != null) {
+                    unbindService(mCurConnection);
+                    mCurConnection = null;
+                }
+                ServiceConnection conn = new MyServiceConnection();
+                if (bindService(mBindIntent, conn,
+                        Context.BIND_AUTO_CREATE | Context.BIND_NOT_FOREGROUND)) {
+                    mCurConnection = conn;
+                }
+            }
+        };
+        private OnClickListener mBindAboveClientListener = new OnClickListener() {
+            public void onClick(View v) {
+                if (mCurConnection != null) {
+                    unbindService(mCurConnection);
+                    mCurConnection = null;
+                }
+                ServiceConnection conn = new MyServiceConnection();
+                if (bindService(new Intent(IRemoteService.class.getName()),
+                        conn, Context.BIND_AUTO_CREATE | Context.BIND_ABOVE_CLIENT)) {
+                    mCurConnection = conn;
+                }
+            }
+        };
+        private OnClickListener mBindAllowOomListener = new OnClickListener() {
+            public void onClick(View v) {
+                if (mCurConnection != null) {
+                    unbindService(mCurConnection);
+                    mCurConnection = null;
+                }
+                ServiceConnection conn = new MyServiceConnection();
+                if (bindService(mBindIntent, conn,
+                        Context.BIND_AUTO_CREATE | Context.BIND_ALLOW_OOM_MANAGEMENT)) {
+                    mCurConnection = conn;
+                }
+            }
+        };
+        private OnClickListener mBindWaivePriorityListener = new OnClickListener() {
+            public void onClick(View v) {
+                if (mCurConnection != null) {
+                    unbindService(mCurConnection);
+                    mCurConnection = null;
+                }
+                ServiceConnection conn = new MyServiceConnection(true);
+                if (bindService(mBindIntent, conn,
+                        Context.BIND_AUTO_CREATE | Context.BIND_WAIVE_PRIORITY)) {
+                    mCurConnection = conn;
+                }
+            }
+        };
+        private OnClickListener mBindImportantListener = new OnClickListener() {
+            public void onClick(View v) {
+                if (mCurConnection != null) {
+                    unbindService(mCurConnection);
+                    mCurConnection = null;
+                }
+                ServiceConnection conn = new MyServiceConnection();
+                if (bindService(mBindIntent, conn,
+                        Context.BIND_AUTO_CREATE | Context.BIND_IMPORTANT)) {
+                    mCurConnection = conn;
+                }
+            }
+        };
+        private OnClickListener mBindWithActivityListener = new OnClickListener() {
+            public void onClick(View v) {
+                if (mCurConnection != null) {
+                    unbindService(mCurConnection);
+                    mCurConnection = null;
+                }
+                ServiceConnection conn = new MyServiceConnection();
+                if (bindService(mBindIntent, conn,
+                        Context.BIND_AUTO_CREATE | Context.BIND_ADJUST_WITH_ACTIVITY
+                                | Context.BIND_WAIVE_PRIORITY)) {
+                    mCurConnection = conn;
+                }
+            }
+        };
+        private OnClickListener mUnbindListener = new OnClickListener() {
+            public void onClick(View v) {
+                if (mCurConnection != null) {
+                    unbindService(mCurConnection);
+                    mCurConnection = null;
+                }
+            }
+        };
+
+        /**
+         * Standard initialization of this activity.  Set up the UI, then wait
+         * for the user to poke it before doing anything.
+         */
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            setContentView(R.layout.remote_binding_options);
+
+            // Watch for button clicks.
+            Button button = (Button) findViewById(R.id.bind_normal);
+            button.setOnClickListener(mBindNormalListener);
+            button = (Button) findViewById(R.id.bind_not_foreground);
+            button.setOnClickListener(mBindNotForegroundListener);
+            button = (Button) findViewById(R.id.bind_above_client);
+            button.setOnClickListener(mBindAboveClientListener);
+            button = (Button) findViewById(R.id.bind_allow_oom);
+            button.setOnClickListener(mBindAllowOomListener);
+            button = (Button) findViewById(R.id.bind_waive_priority);
+            button.setOnClickListener(mBindWaivePriorityListener);
+            button = (Button) findViewById(R.id.bind_important);
+            button.setOnClickListener(mBindImportantListener);
+            button = (Button) findViewById(R.id.bind_with_activity);
+            button.setOnClickListener(mBindWithActivityListener);
+            button = (Button) findViewById(R.id.unbind);
+            button.setOnClickListener(mUnbindListener);
+
+            mCallbackText = (TextView) findViewById(R.id.callback);
+            mCallbackText.setText("Not attached.");
+
+            mBindIntent = new Intent(this, RemoteService.class);
+            mBindIntent.setAction(IRemoteService.class.getName());
+        }
 
         class MyServiceConnection implements ServiceConnection {
             final boolean mUnbindOnDisconnect;
@@ -502,7 +629,7 @@ public class RemoteService extends Service {
             }
 
             public void onServiceConnected(ComponentName className,
-                    IBinder service) {
+                                           IBinder service) {
                 if (mCurConnection != this) {
                     return;
                 }
@@ -526,147 +653,5 @@ public class RemoteService extends Service {
                 }
             }
         }
-
-        /**
-         * Standard initialization of this activity.  Set up the UI, then wait
-         * for the user to poke it before doing anything.
-         */
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
-            setContentView(R.layout.remote_binding_options);
-
-            // Watch for button clicks.
-            Button button = (Button)findViewById(R.id.bind_normal);
-            button.setOnClickListener(mBindNormalListener);
-            button = (Button)findViewById(R.id.bind_not_foreground);
-            button.setOnClickListener(mBindNotForegroundListener);
-            button = (Button)findViewById(R.id.bind_above_client);
-            button.setOnClickListener(mBindAboveClientListener);
-            button = (Button)findViewById(R.id.bind_allow_oom);
-            button.setOnClickListener(mBindAllowOomListener);
-            button = (Button)findViewById(R.id.bind_waive_priority);
-            button.setOnClickListener(mBindWaivePriorityListener);
-            button = (Button)findViewById(R.id.bind_important);
-            button.setOnClickListener(mBindImportantListener);
-            button = (Button)findViewById(R.id.bind_with_activity);
-            button.setOnClickListener(mBindWithActivityListener);
-            button = (Button)findViewById(R.id.unbind);
-            button.setOnClickListener(mUnbindListener);
-
-            mCallbackText = (TextView)findViewById(R.id.callback);
-            mCallbackText.setText("Not attached.");
-
-            mBindIntent = new Intent(this, RemoteService.class);
-            mBindIntent.setAction(IRemoteService.class.getName());
-        }
-
-        private OnClickListener mBindNormalListener = new OnClickListener() {
-            public void onClick(View v) {
-                if (mCurConnection != null) {
-                    unbindService(mCurConnection);
-                    mCurConnection = null;
-                }
-                ServiceConnection conn = new MyServiceConnection();
-                if (bindService(mBindIntent, conn, Context.BIND_AUTO_CREATE)) {
-                    mCurConnection = conn;
-                }
-            }
-        };
-
-        private OnClickListener mBindNotForegroundListener = new OnClickListener() {
-            public void onClick(View v) {
-                if (mCurConnection != null) {
-                    unbindService(mCurConnection);
-                    mCurConnection = null;
-                }
-                ServiceConnection conn = new MyServiceConnection();
-                if (bindService(mBindIntent, conn,
-                        Context.BIND_AUTO_CREATE | Context.BIND_NOT_FOREGROUND)) {
-                    mCurConnection = conn;
-                }
-            }
-        };
-
-        private OnClickListener mBindAboveClientListener = new OnClickListener() {
-            public void onClick(View v) {
-                if (mCurConnection != null) {
-                    unbindService(mCurConnection);
-                    mCurConnection = null;
-                }
-                ServiceConnection conn = new MyServiceConnection();
-                if (bindService(new Intent(IRemoteService.class.getName()),
-                        conn, Context.BIND_AUTO_CREATE | Context.BIND_ABOVE_CLIENT)) {
-                    mCurConnection = conn;
-                }
-            }
-        };
-
-        private OnClickListener mBindAllowOomListener = new OnClickListener() {
-            public void onClick(View v) {
-                if (mCurConnection != null) {
-                    unbindService(mCurConnection);
-                    mCurConnection = null;
-                }
-                ServiceConnection conn = new MyServiceConnection();
-                if (bindService(mBindIntent, conn,
-                        Context.BIND_AUTO_CREATE | Context.BIND_ALLOW_OOM_MANAGEMENT)) {
-                    mCurConnection = conn;
-                }
-            }
-        };
-
-        private OnClickListener mBindWaivePriorityListener = new OnClickListener() {
-            public void onClick(View v) {
-                if (mCurConnection != null) {
-                    unbindService(mCurConnection);
-                    mCurConnection = null;
-                }
-                ServiceConnection conn = new MyServiceConnection(true);
-                if (bindService(mBindIntent, conn,
-                        Context.BIND_AUTO_CREATE | Context.BIND_WAIVE_PRIORITY)) {
-                    mCurConnection = conn;
-                }
-            }
-        };
-
-        private OnClickListener mBindImportantListener = new OnClickListener() {
-            public void onClick(View v) {
-                if (mCurConnection != null) {
-                    unbindService(mCurConnection);
-                    mCurConnection = null;
-                }
-                ServiceConnection conn = new MyServiceConnection();
-                if (bindService(mBindIntent, conn,
-                        Context.BIND_AUTO_CREATE | Context.BIND_IMPORTANT)) {
-                    mCurConnection = conn;
-                }
-            }
-        };
-
-        private OnClickListener mBindWithActivityListener = new OnClickListener() {
-            public void onClick(View v) {
-                if (mCurConnection != null) {
-                    unbindService(mCurConnection);
-                    mCurConnection = null;
-                }
-                ServiceConnection conn = new MyServiceConnection();
-                if (bindService(mBindIntent, conn,
-                        Context.BIND_AUTO_CREATE | Context.BIND_ADJUST_WITH_ACTIVITY
-                        | Context.BIND_WAIVE_PRIORITY)) {
-                    mCurConnection = conn;
-                }
-            }
-        };
-
-        private OnClickListener mUnbindListener = new OnClickListener() {
-            public void onClick(View v) {
-                if (mCurConnection != null) {
-                    unbindService(mCurConnection);
-                    mCurConnection = null;
-                }
-            }
-        };
     }
 }

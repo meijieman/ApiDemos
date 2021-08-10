@@ -16,8 +16,6 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -27,6 +25,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+
+import com.example.android.apis.R;
 
 /**
  * Demonstrates how fragments can participate in the options menu.
@@ -46,7 +46,7 @@ public class FragmentMenuFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_menu, container, false);
 
         // Make sure the two menu fragments are created.
@@ -63,13 +63,13 @@ public class FragmentMenuFragment extends Fragment {
             ft.add(mFragment2, "f2");
         }
         ft.commit();
-        
+
         // Watch check box clicks.
-        mCheckBox1 = (CheckBox)v.findViewById(R.id.menu1);
+        mCheckBox1 = (CheckBox) v.findViewById(R.id.menu1);
         mCheckBox1.setOnClickListener(mClickListener);
-        mCheckBox2 = (CheckBox)v.findViewById(R.id.menu2);
+        mCheckBox2 = (CheckBox) v.findViewById(R.id.menu2);
         mCheckBox2.setOnClickListener(mClickListener);
-        
+
         // Make sure fragments start out with correct visibility.
         updateFragmentVisibility();
 

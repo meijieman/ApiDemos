@@ -16,30 +16,13 @@
 
 package com.example.android.apis.view;
 
-import android.app.ActionBar;
-import android.app.ActionBar.Tab;
 import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.SearchView;
-import android.widget.SeekBar;
-import android.widget.ShareActionProvider;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.SearchView.OnQueryTextListener;
 
 import com.example.android.apis.R;
 import com.example.android.apis.graphics.TouchPaint;
@@ -49,6 +32,34 @@ import com.example.android.apis.graphics.TouchPaint;
  * implement an immersive game.
  */
 public class GameActivity extends Activity {
+
+    Content mContent;
+//END_INCLUDE(content)
+
+    public GameActivity() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.game);
+        mContent = (Content) findViewById(R.id.content);
+        mContent.init(this, (Button) findViewById(R.id.play));
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Pause game when its activity is paused.
+        mContent.setGamePaused(true);
+    }
 
     /**
      * Implementation of a view for the game, filling the entire screen.
@@ -63,13 +74,14 @@ public class GameActivity extends Activity {
         boolean mUpdateSystemUi;
 
         Runnable mFader = new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 fade();
                 if (mUpdateSystemUi) {
                     updateNavVisibility();
                 }
                 if (!mPaused) {
-                    getHandler().postDelayed(mFader, 1000/30);
+                    getHandler().postDelayed(mFader, 1000 / 30);
                 }
             }
         };
@@ -88,14 +100,15 @@ public class GameActivity extends Activity {
             setGamePaused(true);
         }
 
-        @Override public void onSystemUiVisibilityChange(int visibility) {
+        @Override
+        public void onSystemUiVisibilityChange(int visibility) {
             // Detect when we go out of nav-hidden mode, to reset back to having
             // it hidden; our game wants those elements to stay hidden as long
             // as it is being played and stay shown when paused.
             int diff = mLastSystemUiVis ^ visibility;
             mLastSystemUiVis = visibility;
-            if (!mPaused && (diff&SYSTEM_UI_FLAG_HIDE_NAVIGATION) != 0
-                    && (visibility&SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
+            if (!mPaused && (diff & SYSTEM_UI_FLAG_HIDE_NAVIGATION) != 0
+                    && (visibility & SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
                 // We are running and the system UI navigation has become
                 // shown...  we want it to remain hidden, so update our system
                 // UI state at the next game loop.
@@ -103,7 +116,8 @@ public class GameActivity extends Activity {
             }
         }
 
-        @Override protected void onWindowVisibilityChanged(int visibility) {
+        @Override
+        protected void onWindowVisibilityChanged(int visibility) {
             super.onWindowVisibilityChanged(visibility);
 
             // When we become visible or invisible, play is paused.
@@ -122,7 +136,8 @@ public class GameActivity extends Activity {
             }
         }
 
-        @Override public void onClick(View v) {
+        @Override
+        public void onClick(View v) {
             if (v == mPlayButton) {
                 // Clicking on the play/pause button toggles its state.
                 setGamePaused(!mPaused);
@@ -150,40 +165,12 @@ public class GameActivity extends Activity {
                     | SYSTEM_UI_FLAG_LAYOUT_STABLE;
             if (!mPaused) {
                 newVis |= SYSTEM_UI_FLAG_LOW_PROFILE | SYSTEM_UI_FLAG_FULLSCREEN
-                        | SYSTEM_UI_FLAG_HIDE_NAVIGATION  | SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+                        | SYSTEM_UI_FLAG_HIDE_NAVIGATION | SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
             }
 
             // Set the new desired visibility.
             setSystemUiVisibility(newVis);
             mUpdateSystemUi = false;
         }
-    }
-//END_INCLUDE(content)
-
-    Content mContent;
-
-    public GameActivity() {
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.game);
-        mContent = (Content)findViewById(R.id.content);
-        mContent.init(this, (Button)findViewById(R.id.play));
-    }
-
-    @Override
-    public void onAttachedToWindow() {
-        super.onAttachedToWindow();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // Pause game when its activity is paused.
-        mContent.setGamePaused(true);
     }
 }

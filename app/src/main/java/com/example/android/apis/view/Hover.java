@@ -16,41 +16,33 @@
 
 package com.example.android.apis.view;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.example.android.apis.R;
 
 
 /**
  * Demonstrates how to use {@link View#onHoverEvent}, {@link ViewGroup#onInterceptHoverEvent},
  * and {@link View#setOnHoverListener}.
- *
+ * <p>
  * This activity displays a few buttons and text fields and entices the user
  * to hover over them using a mouse or touch pad.  It displays feedback reporting
  * the position of the pointing device and the label of the view being hovered.
- *
+ * <p>
  * A button changes from dark green to bright yellow when hovered.
  * This effect is achieved by using a state-list drawable to select among different
  * background shapes and colors based on the hover state of the button.
- *
+ * <p>
  * A {@link View#OnHoverEventListener} is used to listen for hover events within the
  * container.  The container will re
- *
+ * <p>
  * A checkbox is used to control whether a special view, the Interceptor, will intercept
  * events before they are sent to its child (a button).  When the Interceptor
  * is intercepting events, the button will not change state as the pointer hovers

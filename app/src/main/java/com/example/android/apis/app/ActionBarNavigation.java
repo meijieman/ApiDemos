@@ -19,12 +19,9 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import com.example.android.apis.R;
 
 /**
@@ -40,7 +37,7 @@ public class ActionBarNavigation extends Activity {
         bar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP, ActionBar.DISPLAY_HOME_AS_UP);
 
         setContentView(R.layout.action_bar_navigation);
-        TextView text = (TextView)findViewById(R.id.launchedfrom);
+        TextView text = (TextView) findViewById(R.id.launchedfrom);
         if (getIntent().hasCategory(Intent.CATEGORY_SAMPLE_CODE)) {
             text.setText("This was launched from ApiDemos");
         } else {

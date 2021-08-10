@@ -17,6 +17,7 @@
 package com.example.android.apis.app;
 
 //BEGIN_INCLUDE(complete)
+
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.ListFragment;
@@ -56,45 +57,50 @@ import java.util.HashMap;
  * the number of queries done when its data changes.
  */
 public class LoaderThrottle extends Activity {
-    // Debugging.
-    static final String TAG = "LoaderThrottle";
-
     /**
      * The authority we use to get to our sample provider.
      */
     public static final String AUTHORITY = "com.example.android.apis.app.LoaderThrottle";
+    // Debugging.
+    static final String TAG = "LoaderThrottle";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        FragmentManager fm = getFragmentManager();
+
+        // Create the list fragment and add it as our sole content.
+        if (fm.findFragmentById(android.R.id.content) == null) {
+            ThrottledLoaderListFragment list = new ThrottledLoaderListFragment();
+            fm.beginTransaction().add(android.R.id.content, list).commit();
+        }
+    }
 
     /**
      * Definition of the contract for the main table of our provider.
      */
     public static final class MainTable implements BaseColumns {
 
-        // This class cannot be instantiated
-        private MainTable() {}
-
         /**
          * The table name offered by this provider
          */
         public static final String TABLE_NAME = "main";
-
         /**
          * The content:// style URL for this table
          */
-        public static final Uri CONTENT_URI =  Uri.parse("content://" + AUTHORITY + "/main");
-
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/main");
         /**
          * The content URI base for a single row of data. Callers must
          * append a numeric row id to this Uri to retrieve a row
          */
         public static final Uri CONTENT_ID_URI_BASE
                 = Uri.parse("content://" + AUTHORITY + "/main/");
-
         /**
          * The MIME type of {@link #CONTENT_URI}.
          */
         public static final String CONTENT_TYPE
                 = "vnd.android.cursor.dir/vnd.example.api-demos-throttle";
-
         /**
          * The MIME type of a {@link #CONTENT_URI} sub-directory of a single row.
          */
@@ -104,77 +110,76 @@ public class LoaderThrottle extends Activity {
          * The default sort order for this table
          */
         public static final String DEFAULT_SORT_ORDER = "data COLLATE LOCALIZED ASC";
-
         /**
          * Column name for the single column holding our data.
          * <P>Type: TEXT</P>
          */
         public static final String COLUMN_NAME_DATA = "data";
+
+        // This class cannot be instantiated
+        private MainTable() {
+        }
     }
 
     /**
      * This class helps open, create, and upgrade the database file.
      */
-   static class DatabaseHelper extends SQLiteOpenHelper {
+    static class DatabaseHelper extends SQLiteOpenHelper {
 
-       private static final String DATABASE_NAME = "loader_throttle.db";
-       private static final int DATABASE_VERSION = 2;
+        private static final String DATABASE_NAME = "loader_throttle.db";
+        private static final int DATABASE_VERSION = 2;
 
-       DatabaseHelper(Context context) {
+        DatabaseHelper(Context context) {
 
-           // calls the super constructor, requesting the default cursor factory.
-           super(context, DATABASE_NAME, null, DATABASE_VERSION);
-       }
+            // calls the super constructor, requesting the default cursor factory.
+            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        }
 
-       /**
-        *
-        * Creates the underlying database with table name and column names taken from the
-        * NotePad class.
-        */
-       @Override
-       public void onCreate(SQLiteDatabase db) {
-           db.execSQL("CREATE TABLE " + MainTable.TABLE_NAME + " ("
-                   + MainTable._ID + " INTEGER PRIMARY KEY,"
-                   + MainTable.COLUMN_NAME_DATA + " TEXT"
-                   + ");");
-       }
+        /**
+         * Creates the underlying database with table name and column names taken from the
+         * NotePad class.
+         */
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+            db.execSQL("CREATE TABLE " + MainTable.TABLE_NAME + " ("
+                    + MainTable._ID + " INTEGER PRIMARY KEY,"
+                    + MainTable.COLUMN_NAME_DATA + " TEXT"
+                    + ");");
+        }
 
-       /**
-        *
-        * Demonstrates that the provider must consider what happens when the
-        * underlying datastore is changed. In this sample, the database is upgraded the database
-        * by destroying the existing data.
-        * A real application should upgrade the database in place.
-        */
-       @Override
-       public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        /**
+         * Demonstrates that the provider must consider what happens when the
+         * underlying datastore is changed. In this sample, the database is upgraded the database
+         * by destroying the existing data.
+         * A real application should upgrade the database in place.
+         */
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-           // Logs that the database is being upgraded
-           Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-                   + newVersion + ", which will destroy all old data");
+            // Logs that the database is being upgraded
+            Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
+                    + newVersion + ", which will destroy all old data");
 
-           // Kills the table and existing data
-           db.execSQL("DROP TABLE IF EXISTS notes");
+            // Kills the table and existing data
+            db.execSQL("DROP TABLE IF EXISTS notes");
 
-           // Recreates the database with a new version
-           onCreate(db);
-       }
-   }
+            // Recreates the database with a new version
+            onCreate(db);
+        }
+    }
 
     /**
      * A very simple implementation of a content provider.
      */
     public static class SimpleProvider extends ContentProvider {
-        // A projection map used to select columns from the database
-        private final HashMap<String, String> mNotesProjectionMap;
-        // Uri matcher to decode incoming URIs.
-        private final UriMatcher mUriMatcher;
-
         // The incoming URI matches the main table URI pattern
         private static final int MAIN = 1;
         // The incoming URI matches the main table row ID URI pattern
         private static final int MAIN_ID = 2;
-
+        // A projection map used to select columns from the database
+        private final HashMap<String, String> mNotesProjectionMap;
+        // Uri matcher to decode incoming URIs.
+        private final UriMatcher mUriMatcher;
         // Handle to a new DatabaseHelper.
         private DatabaseHelper mOpenHelper;
 
@@ -209,7 +214,7 @@ public class LoaderThrottle extends Activity {
          */
         @Override
         public Cursor query(Uri uri, String[] projection, String selection,
-                String[] selectionArgs, String sortOrder) {
+                            String[] selectionArgs, String sortOrder) {
 
             // Constructs a new query builder and sets its table name
             SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
@@ -226,7 +231,7 @@ public class LoaderThrottle extends Activity {
                     qb.setProjectionMap(mNotesProjectionMap);
                     qb.appendWhere(MainTable._ID + "=?");
                     selectionArgs = DatabaseUtils.appendSelectionArgs(selectionArgs,
-                            new String[] { uri.getLastPathSegment() });
+                            new String[]{uri.getLastPathSegment()});
                     break;
 
                 default:
@@ -314,9 +319,9 @@ public class LoaderThrottle extends Activity {
                     count = db.delete(MainTable.TABLE_NAME, where, whereArgs);
                     break;
 
-                    // If the incoming URI matches a single note ID, does the delete based on the
-                    // incoming data, but modifies the where clause to restrict it to the
-                    // particular note ID.
+                // If the incoming URI matches a single note ID, does the delete based on the
+                // incoming data, but modifies the where clause to restrict it to the
+                // particular note ID.
                 case MAIN_ID:
                     // If URI is for a particular row ID, delete is based on incoming
                     // data but modified to restrict to the given ID.
@@ -367,36 +372,26 @@ public class LoaderThrottle extends Activity {
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        FragmentManager fm = getFragmentManager();
-
-        // Create the list fragment and add it as our sole content.
-        if (fm.findFragmentById(android.R.id.content) == null) {
-            ThrottledLoaderListFragment list = new ThrottledLoaderListFragment();
-            fm.beginTransaction().add(android.R.id.content, list).commit();
-        }
-    }
-
     public static class ThrottledLoaderListFragment extends ListFragment
             implements LoaderManager.LoaderCallbacks<Cursor> {
 
         // Menu identifiers
         static final int POPULATE_ID = Menu.FIRST;
-        static final int CLEAR_ID = Menu.FIRST+1;
-
+        static final int CLEAR_ID = Menu.FIRST + 1;
+        // These are the rows that we will retrieve.
+        static final String[] PROJECTION = new String[]{
+                MainTable._ID,
+                MainTable.COLUMN_NAME_DATA,
+        };
         // This is the Adapter being used to display the list's data.
         SimpleCursorAdapter mAdapter;
-
         // If non-null, this is the current filter the user has provided.
         String mCurFilter;
-
         // Task we have running to populate the database.
         AsyncTask<Void, Void, Void> mPopulatingTask;
 
-        @Override public void onActivityCreated(Bundle savedInstanceState) {
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
 
             setEmptyText("No data.  Select 'Populate' to fill with data from Z to A at a rate of 4 per second.");
@@ -405,8 +400,8 @@ public class LoaderThrottle extends Activity {
             // Create an empty adapter we will use to display the loaded data.
             mAdapter = new SimpleCursorAdapter(getActivity(),
                     android.R.layout.simple_list_item_1, null,
-                    new String[] { MainTable.COLUMN_NAME_DATA },
-                    new int[] { android.R.id.text1 }, 0);
+                    new String[]{MainTable.COLUMN_NAME_DATA},
+                    new int[]{android.R.id.text1}, 0);
             setListAdapter(mAdapter);
 
             // Start out with a progress indicator.
@@ -417,14 +412,16 @@ public class LoaderThrottle extends Activity {
             getLoaderManager().initLoader(0, null, this);
         }
 
-        @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
             menu.add(Menu.NONE, POPULATE_ID, 0, "Populate")
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             menu.add(Menu.NONE, CLEAR_ID, 0, "Clear")
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         }
 
-        @Override public boolean onOptionsItemSelected(MenuItem item) {
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
             final ContentResolver cr = getActivity().getContentResolver();
 
             switch (item.getItemId()) {
@@ -433,8 +430,9 @@ public class LoaderThrottle extends Activity {
                         mPopulatingTask.cancel(false);
                     }
                     mPopulatingTask = new AsyncTask<Void, Void, Void>() {
-                        @Override protected Void doInBackground(Void... params) {
-                            for (char c='Z'; c>='A'; c--) {
+                        @Override
+                        protected Void doInBackground(Void... params) {
+                            for (char c = 'Z'; c >= 'A'; c--) {
                                 if (isCancelled()) {
                                     break;
                                 }
@@ -453,7 +451,7 @@ public class LoaderThrottle extends Activity {
                         }
                     };
                     mPopulatingTask.executeOnExecutor(
-                            AsyncTask.THREAD_POOL_EXECUTOR, (Void[])null);
+                            AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
                     return true;
 
                 case CLEAR_ID:
@@ -462,12 +460,13 @@ public class LoaderThrottle extends Activity {
                         mPopulatingTask = null;
                     }
                     AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
-                        @Override protected Void doInBackground(Void... params) {
+                        @Override
+                        protected Void doInBackground(Void... params) {
                             cr.delete(MainTable.CONTENT_URI, null, null);
                             return null;
                         }
                     };
-                    task.execute((Void[])null);
+                    task.execute((Void[]) null);
                     return true;
 
                 default:
@@ -475,16 +474,11 @@ public class LoaderThrottle extends Activity {
             }
         }
 
-        @Override public void onListItemClick(ListView l, View v, int position, long id) {
+        @Override
+        public void onListItemClick(ListView l, View v, int position, long id) {
             // Insert desired behavior here.
             Log.i(TAG, "Item clicked: " + id);
         }
-
-        // These are the rows that we will retrieve.
-        static final String[] PROJECTION = new String[] {
-            MainTable._ID,
-            MainTable.COLUMN_NAME_DATA,
-        };
 
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             CursorLoader cl = new CursorLoader(getActivity(), MainTable.CONTENT_URI,

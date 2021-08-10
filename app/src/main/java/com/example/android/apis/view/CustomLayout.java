@@ -18,17 +18,17 @@ package com.example.android.apis.view;
 
 // Need the following import to get access to the app resources, since this
 // class is in a sub-package.
-import android.graphics.Rect;
-import com.example.android.apis.R;
 
-//BEGIN_INCLUDE(Complete)
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
+
+import com.example.android.apis.R;
 
 /**
  * Example of writing a custom layout manager.  This is a fairly full-featured
@@ -37,15 +37,19 @@ import android.widget.RemoteViews;
  */
 @RemoteViews.RemoteView
 public class CustomLayout extends ViewGroup {
-    /** The amount of space used by children in the left gutter. */
-    private int mLeftWidth;
-
-    /** The amount of space used by children in the right gutter. */
-    private int mRightWidth;
-
-    /** These are used for computing child frames based on their gravity. */
+    /**
+     * These are used for computing child frames based on their gravity.
+     */
     private final Rect mTmpContainerRect = new Rect();
     private final Rect mTmpChildRect = new Rect();
+    /**
+     * The amount of space used by children in the left gutter.
+     */
+    private int mLeftWidth;
+    /**
+     * The amount of space used by children in the right gutter.
+     */
+    private int mRightWidth;
 
     public CustomLayout(Context context) {
         super(context);
@@ -209,16 +213,14 @@ public class CustomLayout extends ViewGroup {
      * Custom per-child layout information.
      */
     public static class LayoutParams extends MarginLayoutParams {
+        public static final int POSITION_MIDDLE = 0;
+        public static final int POSITION_LEFT = 1;
+        public static final int POSITION_RIGHT = 2;
         /**
          * The gravity to apply with the View to which these layout parameters
          * are associated.
          */
         public int gravity = Gravity.TOP | Gravity.START;
-
-        public static final int POSITION_MIDDLE = 0;
-        public static final int POSITION_LEFT = 1;
-        public static final int POSITION_RIGHT = 2;
-
         public int position = POSITION_MIDDLE;
 
         public LayoutParams(Context c, AttributeSet attrs) {

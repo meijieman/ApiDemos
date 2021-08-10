@@ -18,23 +18,24 @@ package com.example.android.apis.graphics;
 
 //Need the following import to get access to the app resources, since this
 //class is in a sub-package.
-import com.example.android.apis.R;
 
 import android.app.Activity;
-import android.os.Bundle;
-import android.graphics.BitmapFactory;
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.ScrollView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.content.Context;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import com.example.android.apis.R;
 
 /**
  * This activity demonstrates various ways density can cause the scaling of
@@ -45,7 +46,7 @@ public class DensityActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final LayoutInflater li = (LayoutInflater)getSystemService(
+        final LayoutInflater li = (LayoutInflater) getSystemService(
                 LAYOUT_INFLATER_SERVICE);
 
         this.setTitle(R.string.density_title);
@@ -73,11 +74,11 @@ public class DensityActivity extends Activity {
         addLabelToRoot(root, "Prescaled resource drawable");
         addChildToRoot(root, layout);
 
-        layout = (LinearLayout)li.inflate(R.layout.density_image_views, null);
+        layout = (LinearLayout) li.inflate(R.layout.density_image_views, null);
         addLabelToRoot(root, "Inflated layout");
         addChildToRoot(root, layout);
 
-        layout = (LinearLayout)li.inflate(R.layout.density_styled_image_views, null);
+        layout = (LinearLayout) li.inflate(R.layout.density_styled_image_views, null);
         addLabelToRoot(root, "Inflated styled layout");
         addChildToRoot(root, layout);
 
@@ -177,7 +178,7 @@ public class DensityActivity extends Activity {
         Log.i("foo", "9-patch #" + Integer.toHexString(resource)
                 + " w=" + d.getIntrinsicWidth() + " h=" + d.getIntrinsicHeight());
         view.setLayoutParams(new LinearLayout.LayoutParams(
-                d.getIntrinsicWidth()*2, d.getIntrinsicHeight()*2));
+                d.getIntrinsicWidth() * 2, d.getIntrinsicHeight() * 2));
         layout.addView(view);
     }
 

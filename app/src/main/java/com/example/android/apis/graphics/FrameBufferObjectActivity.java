@@ -16,16 +16,16 @@
 
 package com.example.android.apis.graphics;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL;
-import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL11ExtensionPack;
-
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Bundle;
 import android.os.SystemClock;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL;
+import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11ExtensionPack;
 
 /**
  * Demonstrate the Frame Buffer Object OpenGL ES extension.
@@ -36,18 +36,41 @@ import android.os.SystemClock;
 public class FrameBufferObjectActivity extends Activity {
     private GLSurfaceView mGLSurfaceView;
 
-    private class Renderer implements GLSurfaceView.Renderer {
-        private boolean mContextSupportsFrameBufferObject;
-        private int mTargetTexture;
-        private int mFramebuffer;
-        private int mFramebufferWidth = 256;
-        private int mFramebufferHeight = 256;
-        private int mSurfaceWidth;
-        private int mSurfaceHeight;
+    static void checkGLError(GL gl) {
+        int error = ((GL10) gl).glGetError();
+        if (error != GL10.GL_NO_ERROR) {
+            throw new RuntimeException("GLError 0x" + Integer.toHexString(error));
+        }
+    }
 
-        private Triangle mTriangle;
-        private Cube mCube;
-        private float mAngle;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Create our surface view and set it as the content of our
+        // Activity
+        mGLSurfaceView = new GLSurfaceView(this);
+        mGLSurfaceView.setRenderer(new Renderer());
+        setContentView(mGLSurfaceView);
+    }
+
+    @Override
+    protected void onResume() {
+        // Ideally a game should implement onResume() and onPause()
+        // to take appropriate action when the activity looses focus
+        super.onResume();
+        mGLSurfaceView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        // Ideally a game should implement onResume() and onPause()
+        // to take appropriate action when the activity looses focus
+        super.onPause();
+        mGLSurfaceView.onPause();
+    }
+
+    private class Renderer implements GLSurfaceView.Renderer {
         /**
          * Setting this to true will change the behavior  of this sample. It
          * will suppress the normally onscreen rendering, and it will cause the
@@ -56,6 +79,16 @@ public class FrameBufferObjectActivity extends Activity {
          * rendering algorithm.
          */
         private static final boolean DEBUG_RENDER_OFFSCREEN_ONSCREEN = false;
+        private boolean mContextSupportsFrameBufferObject;
+        private int mTargetTexture;
+        private int mFramebuffer;
+        private int mFramebufferWidth = 256;
+        private int mFramebufferHeight = 256;
+        private int mSurfaceWidth;
+        private int mSurfaceHeight;
+        private Triangle mTriangle;
+        private Cube mCube;
+        private float mAngle;
 
         public void onDrawFrame(GL10 gl) {
             checkGLError(gl);
@@ -72,7 +105,7 @@ public class FrameBufferObjectActivity extends Activity {
             } else {
                 // Current context doesn't support frame buffer objects.
                 // Indicate this by drawing a red background.
-                gl.glClearColor(1,0,0,0);
+                gl.glClearColor(1, 0, 0, 0);
                 gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
             }
         }
@@ -102,7 +135,7 @@ public class FrameBufferObjectActivity extends Activity {
             gl.glLoadIdentity();
             gl.glFrustumf(-ratio, ratio, -1, 1, 3, 7);
 
-            gl.glClearColor(0,0,1,0);
+            gl.glClearColor(0, 0, 1, 0);
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
             gl.glBindTexture(GL10.GL_TEXTURE_2D, mTargetTexture);
 
@@ -143,20 +176,20 @@ public class FrameBufferObjectActivity extends Activity {
             gl.glEnable(GL10.GL_CULL_FACE);
             gl.glEnable(GL10.GL_DEPTH_TEST);
 
-            gl.glClearColor(0,0.5f,1,0);
+            gl.glClearColor(0, 0.5f, 1, 0);
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
             gl.glMatrixMode(GL10.GL_MODELVIEW);
             gl.glLoadIdentity();
             gl.glTranslatef(0, 0, -3.0f);
-            gl.glRotatef(mAngle,        0, 1, 0);
-            gl.glRotatef(mAngle*0.25f,  1, 0, 0);
+            gl.glRotatef(mAngle, 0, 1, 0);
+            gl.glRotatef(mAngle * 0.25f, 1, 0, 0);
 
             gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
             gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
 
             mCube.draw(gl);
 
-            gl.glRotatef(mAngle*2.0f, 0, 1, 1);
+            gl.glRotatef(mAngle * 2.0f, 0, 1, 1);
             gl.glTranslatef(0.5f, 0.5f, 0.5f);
 
             mCube.draw(gl);
@@ -188,7 +221,8 @@ public class FrameBufferObjectActivity extends Activity {
                     GL10.GL_REPEAT);
             gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
                     GL10.GL_REPEAT);
-;            return texture;
+            ;
+            return texture;
         }
 
         private int createFrameBuffer(GL10 gl, int width, int height, int targetTextureId) {
@@ -230,6 +264,7 @@ public class FrameBufferObjectActivity extends Activity {
         /**
          * This is not the fastest way to check for an extension, but fine if
          * we are only checking for a few extensions each time a context is created.
+         *
          * @param gl
          * @param extension
          * @return true if the extension is present in the current context.
@@ -244,39 +279,5 @@ public class FrameBufferObjectActivity extends Activity {
             // is the same as the first part of another extension name.
             return extensions.indexOf(" " + extension + " ") >= 0;
         }
-    }
-
-    static void checkGLError(GL gl) {
-        int error = ((GL10) gl).glGetError();
-        if (error != GL10.GL_NO_ERROR) {
-            throw new RuntimeException("GLError 0x" + Integer.toHexString(error));
-        }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // Create our surface view and set it as the content of our
-        // Activity
-        mGLSurfaceView = new GLSurfaceView(this);
-        mGLSurfaceView.setRenderer(new Renderer());
-        setContentView(mGLSurfaceView);
-    }
-
-    @Override
-    protected void onResume() {
-        // Ideally a game should implement onResume() and onPause()
-        // to take appropriate action when the activity looses focus
-        super.onResume();
-        mGLSurfaceView.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        // Ideally a game should implement onResume() and onPause()
-        // to take appropriate action when the activity looses focus
-        super.onPause();
-        mGLSurfaceView.onPause();
     }
 }

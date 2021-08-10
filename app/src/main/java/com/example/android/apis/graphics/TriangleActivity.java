@@ -22,6 +22,8 @@ import android.os.Bundle;
 
 public class TriangleActivity extends Activity {
 
+    private GLSurfaceView mGLView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +46,4 @@ public class TriangleActivity extends Activity {
         super.onResume();
         mGLView.onResume();
     }
-
-    private GLSurfaceView mGLView;
 }

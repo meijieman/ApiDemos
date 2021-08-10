@@ -72,6 +72,17 @@ public class ChangedContacts extends Activity implements LoaderManager.LoaderCal
     private Button mDeleteButton;
     private Button mChangeButton;
 
+    private static void setText(View view, String value) {
+        TextView text = (TextView) view;
+        text.setText(value);
+    }
+
+    private static TextView buildText(Context context) {
+        TextView view = new TextView(context);
+        view.setPadding(3, 3, 3, 3);
+        return view;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,7 +168,7 @@ public class ChangedContacts extends Activity implements LoaderManager.LoaderCal
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        switch(id) {
+        switch (id) {
             case ID_CHANGE_LOADER:
                 return getChangeLoader();
             case ID_DELETE_LOADER:
@@ -251,26 +262,6 @@ public class ChangedContacts extends Activity implements LoaderManager.LoaderCal
         }
     }
 
-    private class DeleteCursorWrapper extends CursorWrapper {
-
-        /**
-         * Creates a cursor wrapper.
-         *
-         * @param cursor The underlying cursor to wrap.
-         */
-        public DeleteCursorWrapper(Cursor cursor) {
-            super(cursor);
-        }
-
-        @Override
-        public int getColumnIndexOrThrow(String columnName) {
-            if (columnName.equals("_id")) {
-                return super.getColumnIndex(ContactsContract.DeletedContacts.CONTACT_ID);
-            }
-            return super.getColumnIndex(columnName);
-        }
-    }
-
     private static class DeleteAdapter extends CursorAdapter {
 
         private Context mContext;
@@ -335,14 +326,23 @@ public class ChangedContacts extends Activity implements LoaderManager.LoaderCal
         }
     }
 
-    private static void setText(View view, String value) {
-        TextView text = (TextView) view;
-        text.setText(value);
-    }
+    private class DeleteCursorWrapper extends CursorWrapper {
 
-    private static TextView buildText(Context context) {
-        TextView view = new TextView(context);
-        view.setPadding(3, 3, 3, 3);
-        return view;
+        /**
+         * Creates a cursor wrapper.
+         *
+         * @param cursor The underlying cursor to wrap.
+         */
+        public DeleteCursorWrapper(Cursor cursor) {
+            super(cursor);
+        }
+
+        @Override
+        public int getColumnIndexOrThrow(String columnName) {
+            if (columnName.equals("_id")) {
+                return super.getColumnIndex(ContactsContract.DeletedContacts.CONTACT_ID);
+            }
+            return super.getColumnIndex(columnName);
+        }
     }
 }

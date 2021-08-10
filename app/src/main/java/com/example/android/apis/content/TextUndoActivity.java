@@ -16,19 +16,17 @@
 
 package com.example.android.apis.content;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.example.android.apis.R;
 
 /**
  * Simple example of using an UndoManager for editing text in a TextView.
@@ -69,35 +67,17 @@ public class TextUndoActivity extends Activity {
         });
 
         mLengthLimitText = (EditText) findViewById(R.id.length_limit_text);
-        mLengthLimitText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(4) });
+        mLengthLimitText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(4)});
 
         mCreditCardText = (EditText) findViewById(R.id.credit_card_text);
         mCreditCardText.setKeyListener(DigitsKeyListener.getInstance(CREDIT_CARD_CHARS));
         mCreditCardText.addTextChangedListener(new CreditCardTextWatcher());
-     }
+    }
 
     /**
      * A simple credit card input formatter that adds spaces every 4 characters.
      */
     private static class CreditCardTextWatcher implements TextWatcher {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            String original = s.toString();
-            String formatted = addSpaces(getNumbers(original));
-            // This is an ugly way to avoid infinite recursion, but it's common in app code.
-            if (!formatted.equals(original)) {
-                s.replace(0, s.length(), formatted);
-            }
-        }
-
         /**
          * @return Returns a string with a space added every 4 characters.
          */
@@ -132,6 +112,24 @@ public class TextUndoActivity extends Activity {
 
         private static boolean isNumber(char c) {
             return c >= '0' && c <= '9';
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            String original = s.toString();
+            String formatted = addSpaces(getNumbers(original));
+            // This is an ugly way to avoid infinite recursion, but it's common in app code.
+            if (!formatted.equals(original)) {
+                s.replace(0, s.length(), formatted);
+            }
         }
 
     }

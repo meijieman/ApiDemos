@@ -27,6 +27,8 @@ import android.os.Bundle;
  * display translucent 3D graphics.
  */
 public class TranslucentGLSurfaceViewActivity extends Activity {
+    private GLSurfaceView mGLSurfaceView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +59,5 @@ public class TranslucentGLSurfaceViewActivity extends Activity {
         super.onPause();
         mGLSurfaceView.onPause();
     }
-
-    private GLSurfaceView mGLSurfaceView;
 }
 

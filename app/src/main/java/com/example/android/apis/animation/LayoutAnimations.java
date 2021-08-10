@@ -18,22 +18,22 @@ package com.example.android.apis.animation;
 
 // Need the following import to get access to the app resources, since this
 // class is in a sub-package.
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import com.example.android.apis.R;
 
+import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.Keyframe;
 import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.widget.Button;
+import com.example.android.apis.R;
 
 /**
  * This application demonstrates how to use LayoutTransition to automate transition animations
@@ -41,7 +41,6 @@ import android.widget.Button;
  */
 public class LayoutAnimations extends Activity {
 
-    private int numButtons = 1;
     ViewGroup container = null;
     Animator defaultAppearingAnim, defaultDisappearingAnim;
     Animator defaultChangingAppearingAnim, defaultChangingDisappearingAnim;
@@ -49,8 +48,11 @@ public class LayoutAnimations extends Activity {
     Animator customChangingAppearingAnim, customChangingDisappearingAnim;
     Animator currentAppearingAnim, currentDisappearingAnim;
     Animator currentChangingAppearingAnim, currentChangingDisappearingAnim;
+    private int numButtons = 1;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +60,8 @@ public class LayoutAnimations extends Activity {
 
         container = new FixedGridLayout(this);
         container.setClipChildren(false);
-        ((FixedGridLayout)container).setCellHeight(90);
-        ((FixedGridLayout)container).setCellWidth(100);
+        ((FixedGridLayout) container).setCellHeight(90);
+        ((FixedGridLayout) container).setCellWidth(100);
         final LayoutTransition transitioner = new LayoutTransition();
         container.setLayoutTransition(transitioner);
         defaultAppearingAnim = transitioner.getAnimator(LayoutTransition.APPEARING);
@@ -141,8 +143,8 @@ public class LayoutAnimations extends Activity {
                         defaultChangingAppearingAnim) : null);
         transition.setAnimator(LayoutTransition.CHANGE_DISAPPEARING,
                 changingDisappearingCB.isChecked() ?
-                (customAnimCB.isChecked() ? customChangingDisappearingAnim :
-                        defaultChangingDisappearingAnim) : null);
+                        (customAnimCB.isChecked() ? customChangingDisappearingAnim :
+                                defaultChangingDisappearingAnim) : null);
     }
 
     private void createCustomAnimations(LayoutTransition transition) {
@@ -160,7 +162,7 @@ public class LayoutAnimations extends Activity {
         PropertyValuesHolder pvhScaleY =
                 PropertyValuesHolder.ofFloat("scaleY", 1f, 0f, 1f);
         customChangingAppearingAnim = ObjectAnimator.ofPropertyValuesHolder(
-                        this, pvhLeft, pvhTop, pvhRight, pvhBottom, pvhScaleX, pvhScaleY).
+                this, pvhLeft, pvhTop, pvhRight, pvhBottom, pvhScaleX, pvhScaleY).
                 setDuration(transition.getDuration(LayoutTransition.CHANGE_APPEARING));
         customChangingAppearingAnim.addListener(new AnimatorListenerAdapter() {
             public void onAnimationEnd(Animator anim) {
@@ -177,7 +179,7 @@ public class LayoutAnimations extends Activity {
         PropertyValuesHolder pvhRotation =
                 PropertyValuesHolder.ofKeyframe("rotation", kf0, kf1, kf2);
         customChangingDisappearingAnim = ObjectAnimator.ofPropertyValuesHolder(
-                        this, pvhLeft, pvhTop, pvhRight, pvhBottom, pvhRotation).
+                this, pvhLeft, pvhTop, pvhRight, pvhBottom, pvhRotation).
                 setDuration(transition.getDuration(LayoutTransition.CHANGE_DISAPPEARING));
         customChangingDisappearingAnim.addListener(new AnimatorListenerAdapter() {
             public void onAnimationEnd(Animator anim) {

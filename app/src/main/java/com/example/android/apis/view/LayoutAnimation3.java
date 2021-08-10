@@ -16,13 +16,23 @@
 
 package com.example.android.apis.view;
 
-import com.example.android.apis.R;
-
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 
+import com.example.android.apis.R;
+
 public class LayoutAnimation3 extends ListActivity {
+    private String[] mStrings = {
+            "Bordeaux",
+            "Lyon",
+            "Marseille",
+            "Nancy",
+            "Paris",
+            "Toulouse",
+            "Strasbourg"
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,14 +41,4 @@ public class LayoutAnimation3 extends ListActivity {
         setListAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, mStrings));
     }
-
-    private String[] mStrings = {
-        "Bordeaux",
-        "Lyon",
-        "Marseille",
-        "Nancy",
-        "Paris",
-        "Toulouse",
-        "Strasbourg"
-    };
 }

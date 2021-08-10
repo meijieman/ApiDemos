@@ -29,7 +29,6 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.Property;
 import android.view.View;
 import android.view.animation.Animation;
@@ -39,7 +38,9 @@ import android.widget.RadioGroup;
 
 import com.example.android.apis.R;
 
-/** This application demonstrates the use of Path animation. */
+/**
+ * This application demonstrates the use of Path animation.
+ */
 public class PathAnimations extends Activity implements
         RadioGroup.OnCheckedChangeListener, View.OnLayoutChangeListener {
 
@@ -88,7 +89,9 @@ public class PathAnimations extends Activity implements
 
     private ObjectAnimator mAnimator;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,8 +122,8 @@ public class PathAnimations extends Activity implements
 
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
-            int oldTop, int oldRight, int oldBottom) {
-        int checkedId = ((RadioGroup)findViewById(R.id.path_animation_type)).getCheckedRadioButtonId();
+                               int oldTop, int oldRight, int oldBottom) {
+        int checkedId = ((RadioGroup) findViewById(R.id.path_animation_type)).getCheckedRadioButtonId();
         if (checkedId != RadioGroup.NO_ID) {
             startAnimator(checkedId);
         }
@@ -222,8 +225,8 @@ public class PathAnimations extends Activity implements
             super.onLayout(changed, left, top, right, bottom);
             if (changed) {
                 Matrix scale = new Matrix();
-                float scaleWidth = (right-left)/TRAVERSE_PATH_SIZE;
-                float scaleHeight= (bottom-top)/TRAVERSE_PATH_SIZE;
+                float scaleWidth = (right - left) / TRAVERSE_PATH_SIZE;
+                float scaleHeight = (bottom - top) / TRAVERSE_PATH_SIZE;
                 scale.setScale(scaleWidth, scaleHeight);
                 sTraversalPath.transform(scale, mPath);
             }

@@ -15,8 +15,6 @@
  */
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
@@ -29,6 +27,8 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+
+import com.example.android.apis.R;
 
 /**
  * This demo shows how various action bar display option flags can be combined

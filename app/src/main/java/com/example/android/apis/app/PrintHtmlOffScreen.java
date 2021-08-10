@@ -79,7 +79,7 @@ public class PrintHtmlOffScreen extends Activity {
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-              doPrint();
+                doPrint();
             }
         });
 
@@ -104,15 +104,15 @@ public class PrintHtmlOffScreen extends Activity {
 
             @Override
             public void onLayout(PrintAttributes oldAttributes, PrintAttributes newAttributes,
-                    CancellationSignal cancellationSignal, LayoutResultCallback callback,
-                    Bundle extras) {
+                                 CancellationSignal cancellationSignal, LayoutResultCallback callback,
+                                 Bundle extras) {
                 mWrappedInstance.onLayout(oldAttributes, newAttributes, cancellationSignal,
                         callback, extras);
             }
 
             @Override
             public void onWrite(PageRange[] pages, ParcelFileDescriptor destination,
-                    CancellationSignal cancellationSignal, WriteResultCallback callback) {
+                                CancellationSignal cancellationSignal, WriteResultCallback callback) {
                 mWrappedInstance.onWrite(pages, destination, cancellationSignal, callback);
             }
 

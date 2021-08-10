@@ -16,16 +16,6 @@
 
 package com.example.android.apis.graphics.spritetext;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -38,8 +28,38 @@ import android.util.Log;
 
 import com.example.android.apis.R;
 
-public class SpriteTextRenderer implements GLSurfaceView.Renderer{
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
+public class SpriteTextRenderer implements GLSurfaceView.Renderer {
+
+    private final static int SAMPLE_PERIOD_FRAMES = 12;
+    private final static float SAMPLE_FACTOR = 1.0f / SAMPLE_PERIOD_FRAMES;
+    private int mWidth;
+    private int mHeight;
+    private Context mContext;
+    private Triangle mTriangle;
+    private int mTextureID;
+    private int mFrames;
+    private int mMsPerFrame;
+    private long mStartTime;
+    private LabelMaker mLabels;
+    private Paint mLabelPaint;
+    private int mLabelA;
+    private int mLabelB;
+    private int mLabelC;
+    private int mLabelMsPF;
+    private Projector mProjector;
+    private NumericSprite mNumericSprite;
+    private float[] mScratch = new float[8];
+    private long mLastTime;
     public SpriteTextRenderer(Context context) {
         mContext = context;
         mTriangle = new Triangle();
@@ -103,7 +123,7 @@ public class SpriteTextRenderer implements GLSurfaceView.Renderer{
         } finally {
             try {
                 is.close();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 // Ignore.
             }
         }
@@ -244,10 +264,10 @@ public class SpriteTextRenderer implements GLSurfaceView.Renderer{
         mProjector.setCurrentView(0, 0, w, h);
 
         /*
-        * Set our projection matrix. This doesn't have to be done
-        * each time we draw, but usually a new projection needs to
-        * be set when the viewport is resized.
-        */
+         * Set our projection matrix. This doesn't have to be done
+         * each time we draw, but usually a new projection needs to
+         * be set when the viewport is resized.
+         */
 
         float ratio = (float) w / h;
         gl.glMatrixMode(GL10.GL_PROJECTION);
@@ -255,30 +275,21 @@ public class SpriteTextRenderer implements GLSurfaceView.Renderer{
         gl.glFrustumf(-ratio, ratio, -1, 1, 1, 10);
         mProjector.getCurrentProjection(gl);
     }
-
-    private int mWidth;
-    private int mHeight;
-    private Context mContext;
-    private Triangle mTriangle;
-    private int mTextureID;
-    private int mFrames;
-    private int mMsPerFrame;
-    private final static int SAMPLE_PERIOD_FRAMES = 12;
-    private final static float SAMPLE_FACTOR = 1.0f / SAMPLE_PERIOD_FRAMES;
-    private long mStartTime;
-    private LabelMaker mLabels;
-    private Paint mLabelPaint;
-    private int mLabelA;
-    private int mLabelB;
-    private int mLabelC;
-    private int mLabelMsPF;
-    private Projector mProjector;
-    private NumericSprite mNumericSprite;
-    private float[] mScratch = new float[8];
-    private long mLastTime;
 }
 
 class Triangle {
+    private final static int VERTS = 3;
+    // A unit-sided equalateral triangle centered on the origin.
+    private final static float[] sCoords = {
+            // X, Y, Z
+            -0.5f, -0.25f, 0,
+            0.5f, -0.25f, 0,
+            0.0f, 0.559016994f, 0
+    };
+    private FloatBuffer mFVertexBuffer;
+    private FloatBuffer mTexBuffer;
+    private ShortBuffer mIndexBuffer;
+
     public Triangle() {
 
         // Buffers to be passed to gl*Pointer() functions
@@ -302,18 +313,18 @@ class Triangle {
         mIndexBuffer = ibb.asShortBuffer();
 
         for (int i = 0; i < VERTS; i++) {
-            for(int j = 0; j < 3; j++) {
-                mFVertexBuffer.put(sCoords[i*3+j]);
+            for (int j = 0; j < 3; j++) {
+                mFVertexBuffer.put(sCoords[i * 3 + j]);
             }
         }
 
         for (int i = 0; i < VERTS; i++) {
-            for(int j = 0; j < 2; j++) {
-                mTexBuffer.put(sCoords[i*3+j] * 2.0f + 0.5f);
+            for (int j = 0; j < 2; j++) {
+                mTexBuffer.put(sCoords[i * 3 + j] * 2.0f + 0.5f);
             }
         }
 
-        for(int i = 0; i < VERTS; i++) {
+        for (int i = 0; i < VERTS; i++) {
             mIndexBuffer.put((short) i);
         }
 
@@ -332,23 +343,10 @@ class Triangle {
     }
 
     public float getX(int vertex) {
-        return sCoords[3*vertex];
+        return sCoords[3 * vertex];
     }
 
     public float getY(int vertex) {
-        return sCoords[3*vertex+1];
+        return sCoords[3 * vertex + 1];
     }
-
-    private final static int VERTS = 3;
-
-    private FloatBuffer mFVertexBuffer;
-    private FloatBuffer mTexBuffer;
-    private ShortBuffer mIndexBuffer;
-    // A unit-sided equalateral triangle centered on the origin.
-    private final static float[] sCoords = {
-            // X, Y, Z
-            -0.5f, -0.25f, 0,
-             0.5f, -0.25f, 0,
-             0.0f,  0.559016994f, 0
-    };
 }

@@ -17,7 +17,11 @@
 package com.example.android.apis.graphics;
 
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Region;
 import android.os.Bundle;
 import android.view.View;
 
@@ -61,7 +65,8 @@ public class Clipping extends GraphicsActivity {
             canvas.drawText("Clipping", 100, 30, mPaint);
         }
 
-        @Override protected void onDraw(Canvas canvas) {
+        @Override
+        protected void onDraw(Canvas canvas) {
             canvas.drawColor(Color.GRAY);
 
             canvas.save();

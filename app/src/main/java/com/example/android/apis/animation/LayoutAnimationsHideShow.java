@@ -18,23 +18,23 @@ package com.example.android.apis.animation;
 
 // Need the following import to get access to the app resources, since this
 // class is in a sub-package.
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.widget.LinearLayout;
-import com.example.android.apis.R;
 
+import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.Keyframe;
 import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+
+import com.example.android.apis.R;
 
 /**
  * This application demonstrates how to use LayoutTransition to automate transition animations
@@ -42,11 +42,13 @@ import android.widget.Button;
  */
 public class LayoutAnimationsHideShow extends Activity {
 
-    private int numButtons = 1;
     ViewGroup container = null;
+    private int numButtons = 1;
     private LayoutTransition mTransitioner;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,7 +126,7 @@ public class LayoutAnimationsHideShow extends Activity {
         PropertyValuesHolder pvhScaleY =
                 PropertyValuesHolder.ofFloat("scaleY", 1f, 0f, 1f);
         final ObjectAnimator changeIn = ObjectAnimator.ofPropertyValuesHolder(
-                        this, pvhLeft, pvhTop, pvhRight, pvhBottom, pvhScaleX, pvhScaleY).
+                this, pvhLeft, pvhTop, pvhRight, pvhBottom, pvhScaleX, pvhScaleY).
                 setDuration(mTransitioner.getDuration(LayoutTransition.CHANGE_APPEARING));
         mTransitioner.setAnimator(LayoutTransition.CHANGE_APPEARING, changeIn);
         changeIn.addListener(new AnimatorListenerAdapter() {
@@ -142,7 +144,7 @@ public class LayoutAnimationsHideShow extends Activity {
         PropertyValuesHolder pvhRotation =
                 PropertyValuesHolder.ofKeyframe("rotation", kf0, kf1, kf2);
         final ObjectAnimator changeOut = ObjectAnimator.ofPropertyValuesHolder(
-                        this, pvhLeft, pvhTop, pvhRight, pvhBottom, pvhRotation).
+                this, pvhLeft, pvhTop, pvhRight, pvhBottom, pvhRotation).
                 setDuration(mTransitioner.getDuration(LayoutTransition.CHANGE_DISAPPEARING));
         mTransitioner.setAnimator(LayoutTransition.CHANGE_DISAPPEARING, changeOut);
         changeOut.addListener(new AnimatorListenerAdapter() {

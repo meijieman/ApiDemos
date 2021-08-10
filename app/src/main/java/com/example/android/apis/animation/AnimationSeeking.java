@@ -18,14 +18,11 @@ package com.example.android.apis.animation;
 
 // Need the following import to get access to the app resources, since this
 // class is in a sub-package.
+
 import android.animation.Animator;
-import com.example.android.apis.R;
-
-import java.util.ArrayList;
-
-import android.animation.ValueAnimator;
-import android.animation.ObjectAnimator;
 import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -41,6 +38,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
+import com.example.android.apis.R;
+
+import java.util.ArrayList;
+
 /**
  * This application demonstrates the seeking capability of ValueAnimator. The SeekBar in the
  * UI allows you to set the position of the animation. Pressing the Run button will play from
@@ -51,7 +52,9 @@ public class AnimationSeeking extends Activity {
     private static final int DURATION = 1500;
     private SeekBar mSeekBar;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +80,7 @@ public class AnimationSeeking extends Activity {
             }
 
             public void onProgressChanged(SeekBar seekBar, int progress,
-                    boolean fromUser) {
+                                          boolean fromUser) {
                 // prevent seeking on app creation
                 if (animView.getHeight() != 0) {
                     animView.seek(progress);
@@ -130,12 +133,12 @@ public class AnimationSeeking extends Activity {
             ShapeHolder shapeHolder = new ShapeHolder(drawable);
             shapeHolder.setX(x);
             shapeHolder.setY(y);
-            int red = (int)(100 + Math.random() * 155);
-            int green = (int)(100 + Math.random() * 155);
-            int blue = (int)(100 + Math.random() * 155);
+            int red = (int) (100 + Math.random() * 155);
+            int green = (int) (100 + Math.random() * 155);
+            int blue = (int) (100 + Math.random() * 155);
             int color = 0xff000000 | red << 16 | green << 8 | blue;
             Paint paint = drawable.getPaint();
-            int darkColor = 0xff000000 | red/4 << 16 | green/4 << 8 | blue/4;
+            int darkColor = 0xff000000 | red / 4 << 16 | green / 4 << 8 | blue / 4;
             RadialGradient gradient = new RadialGradient(37.5f, 12.5f,
                     50f, color, darkColor, Shader.TileMode.CLAMP);
             paint.setShader(gradient);
@@ -160,7 +163,7 @@ public class AnimationSeeking extends Activity {
         }
 
         public void onAnimationEnd(Animator animation) {
-            balls.remove(((ObjectAnimator)animation).getTarget());
+            balls.remove(((ObjectAnimator) animation).getTarget());
 
         }
 

@@ -16,14 +16,13 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-import com.example.android.apis.graphics.CubeRenderer;
-
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.SurfaceView;
-import android.view.WindowManager;
+
+import com.example.android.apis.R;
+import com.example.android.apis.graphics.CubeRenderer;
 
 /**
  * <h3>Secure Window Activity</h3>
@@ -71,7 +70,7 @@ public class SecureSurfaceViewActivity extends Activity {
         // Set up the surface view.
         // We use a GLSurfaceView in this demonstration but ordinary
         // SurfaceViews also support the same secure surface functionality.
-        mSurfaceView = (GLSurfaceView)findViewById(R.id.surface_view);
+        mSurfaceView = (GLSurfaceView) findViewById(R.id.surface_view);
         mSurfaceView.setRenderer(new CubeRenderer(false));
 
         // Make the surface view secure.  This must be done at the time the surface view

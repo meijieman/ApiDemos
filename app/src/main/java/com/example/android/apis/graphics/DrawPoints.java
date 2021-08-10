@@ -17,7 +17,9 @@
 package com.example.android.apis.graphics;
 
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.View;
 
@@ -30,13 +32,18 @@ public class DrawPoints extends GraphicsActivity {
     }
 
     private static class SampleView extends View {
-        private Paint   mPaint = new Paint();
-        private float[] mPts;
-
         private static final float SIZE = 300;
         private static final int SEGS = 32;
         private static final int X = 0;
         private static final int Y = 1;
+        private Paint mPaint = new Paint();
+        private float[] mPts;
+
+        public SampleView(Context context) {
+            super(context);
+
+            buildPoints();
+        }
 
         private void buildPoints() {
             final int ptCount = (SEGS + 1) * 2;
@@ -45,21 +52,16 @@ public class DrawPoints extends GraphicsActivity {
             float value = 0;
             final float delta = SIZE / SEGS;
             for (int i = 0; i <= SEGS; i++) {
-                mPts[i*4 + X] = SIZE - value;
-                mPts[i*4 + Y] = 0;
-                mPts[i*4 + X + 2] = 0;
-                mPts[i*4 + Y + 2] = value;
+                mPts[i * 4 + X] = SIZE - value;
+                mPts[i * 4 + Y] = 0;
+                mPts[i * 4 + X + 2] = 0;
+                mPts[i * 4 + Y + 2] = value;
                 value += delta;
             }
         }
 
-        public SampleView(Context context) {
-            super(context);
-
-            buildPoints();
-        }
-
-        @Override protected void onDraw(Canvas canvas) {
+        @Override
+        protected void onDraw(Canvas canvas) {
             Paint paint = mPaint;
 
             canvas.translate(10, 10);

@@ -16,9 +16,6 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-import com.example.android.apis.Shakespeare;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -35,6 +32,9 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.example.android.apis.R;
+import com.example.android.apis.Shakespeare;
+
 /**
  * Demonstration of using fragments to implement different activity layouts.
  * This sample provides a different layout (and activity flow) when run in
@@ -42,11 +42,11 @@ import android.widget.TextView;
  */
 public class FragmentLayout extends Activity {
 
-//BEGIN_INCLUDE(main)
+    //BEGIN_INCLUDE(main)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         setContentView(R.layout.fragment_layout);
     }
 //END_INCLUDE(main)
@@ -198,7 +198,7 @@ public class FragmentLayout extends Activity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             if (container == null) {
                 // We have different layouts, and in one of them this
                 // fragment's containing frame doesn't exist.  The fragment
@@ -212,7 +212,7 @@ public class FragmentLayout extends Activity {
 
             ScrollView scroller = new ScrollView(getActivity());
             TextView text = new TextView(getActivity());
-            int padding = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+            int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                     4, getActivity().getResources().getDisplayMetrics());
             text.setPadding(padding, padding, padding, padding);
             scroller.addView(text);

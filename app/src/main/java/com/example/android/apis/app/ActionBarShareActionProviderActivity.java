@@ -64,9 +64,9 @@ public class ActionBarShareActionProviderActivity extends Activity {
         // Set file with share history to the provider and set the share intent.
         MenuItem overflowItem = menu.findItem(R.id.menu_item_share_action_provider_overflow);
         ShareActionProvider overflowProvider =
-            (ShareActionProvider) overflowItem.getActionProvider();
+                (ShareActionProvider) overflowItem.getActionProvider();
         overflowProvider.setShareHistoryFileName(
-            ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+                ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
         // Note that you can set/change the intent any time,
         // say when the user has selected an image.
         overflowProvider.setShareIntent(createShareIntent());
@@ -101,7 +101,7 @@ public class ActionBarShareActionProviderActivity extends Activity {
             byte[] buffer = new byte[1024];
             int length;
             try {
-                while ((length = inputStream.read(buffer)) > 0){
+                while ((length = inputStream.read(buffer)) > 0) {
                     outputStream.write(buffer, 0, length);
                 }
             } catch (IOException ioe) {
@@ -114,13 +114,13 @@ public class ActionBarShareActionProviderActivity extends Activity {
                 if (inputStream != null)
                     inputStream.close();
             } catch (IOException ioe) {
-               /* ignore */
+                /* ignore */
             }
             try {
                 if (outputStream != null)
                     outputStream.close();
             } catch (IOException ioe) {
-               /* ignore */
+                /* ignore */
             }
         }
     }

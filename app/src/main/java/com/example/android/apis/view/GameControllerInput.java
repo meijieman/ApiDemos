@@ -16,8 +16,6 @@
 
 package com.example.android.apis.view;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -27,17 +25,19 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.InputDevice;
+import android.view.InputDevice.MotionRange;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.InputDevice.MotionRange;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.android.apis.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +46,10 @@ import java.util.List;
 /**
  * Demonstrates how to process input events received from game controllers.
  * It also shows how to detect when input devices are added, removed or reconfigured.
- *
+ * <p>
  * This activity displays button states and joystick positions.
  * Also writes detailed information about relevant input events to the log.
- *
+ * <p>
  * The game controller is also uses to control a very simple game.  See {@link GameView}
  * for the game itself.
  */
@@ -67,7 +67,7 @@ public class GameControllerInput extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mInputManager = (InputManager)getSystemService(Context.INPUT_SERVICE);
+        mInputManager = (InputManager) getSystemService(Context.INPUT_SERVICE);
 
         mInputDeviceStates = new SparseArray<>();
         mSummaryAdapter = new SummaryAdapter(this, getResources());
@@ -228,6 +228,23 @@ public class GameControllerInput extends Activity
             mKeys = new SparseIntArray();
         }
 
+        // Check whether this is a key we care about.
+        // In a real game, we would probably let the user configure which keys to use
+        // instead of hardcoding the keys like this.
+        private static boolean isGameKey(int keyCode) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_DPAD_UP:
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                case KeyEvent.KEYCODE_DPAD_CENTER:
+                case KeyEvent.KEYCODE_SPACE:
+                    return true;
+                default:
+                    return KeyEvent.isGamepadButton(keyCode);
+            }
+        }
+
         public InputDevice getDevice() {
             return mDevice;
         }
@@ -306,23 +323,6 @@ public class GameControllerInput extends Activity
             }
             Log.i(TAG, message.toString());
             return true;
-        }
-
-        // Check whether this is a key we care about.
-        // In a real game, we would probably let the user configure which keys to use
-        // instead of hardcoding the keys like this.
-        private static boolean isGameKey(int keyCode) {
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_DPAD_UP:
-                case KeyEvent.KEYCODE_DPAD_DOWN:
-                case KeyEvent.KEYCODE_DPAD_LEFT:
-                case KeyEvent.KEYCODE_DPAD_RIGHT:
-                case KeyEvent.KEYCODE_DPAD_CENTER:
-                case KeyEvent.KEYCODE_SPACE:
-                    return true;
-                default:
-                    return KeyEvent.isGamepadButton(keyCode);
-            }
         }
     }
 

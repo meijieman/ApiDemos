@@ -16,8 +16,6 @@
 
 package com.example.android.apis.nfc;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -28,6 +26,8 @@ import android.nfc.tech.NfcF;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+
+import com.example.android.apis.R;
 
 /**
  * An example of how to use the NFC foreground dispatch APIs. This will intercept any MIME data
@@ -64,12 +64,12 @@ public class ForegroundDispatch extends Activity {
         } catch (MalformedMimeTypeException e) {
             throw new RuntimeException("fail", e);
         }
-        mFilters = new IntentFilter[] {
+        mFilters = new IntentFilter[]{
                 ndef,
         };
 
         // Setup a tech list for all NfcF tags
-        mTechLists = new String[][] { new String[] { NfcF.class.getName() } };
+        mTechLists = new String[][]{new String[]{NfcF.class.getName()}};
     }
 
     @Override

@@ -16,13 +16,13 @@
 
 package com.example.android.apis.view;
 
-import com.example.android.apis.R;
-
 import android.app.TabActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TabHost;
 import android.widget.TextView;
+
+import com.example.android.apis.R;
 
 /**
  * Demonstrates the Tab scrolling when too many tabs are displayed to fit in the screen.
@@ -37,7 +37,7 @@ public class Tabs5 extends TabActivity implements TabHost.TabContentFactory {
 
         final TabHost tabHost = getTabHost();
 
-        for (int i=1; i <= 30; i++) {
+        for (int i = 1; i <= 30; i++) {
             String name = "Tab " + i;
             tabHost.addTab(tabHost.newTabSpec(name)
                     .setIndicator(name)
@@ -45,7 +45,9 @@ public class Tabs5 extends TabActivity implements TabHost.TabContentFactory {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public View createTabContent(String tag) {
         final TextView tv = new TextView(this);
         tv.setText("Content for tab with tag " + tag);

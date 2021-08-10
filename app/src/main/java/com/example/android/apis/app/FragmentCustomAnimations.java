@@ -16,18 +16,18 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.example.android.apis.R;
 
 /**
  * Demonstrates the use of custom animations in a FragmentTransaction when
@@ -42,7 +42,7 @@ public class FragmentCustomAnimations extends Activity {
         setContentView(R.layout.fragment_stack);
 
         // Watch for button clicks.
-        Button button = (Button)findViewById(R.id.new_fragment);
+        Button button = (Button) findViewById(R.id.new_fragment);
         button.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 addFragmentToStack();
@@ -65,7 +65,7 @@ public class FragmentCustomAnimations extends Activity {
         outState.putInt("level", mStackLevel);
     }
 
-//BEGIN_INCLUDE(add_stack)
+    //BEGIN_INCLUDE(add_stack)
     void addFragmentToStack() {
         mStackLevel++;
 
@@ -85,7 +85,7 @@ public class FragmentCustomAnimations extends Activity {
     }
 //END_INCLUDE(add_stack)
 
-//BEGIN_INCLUDE(fragment)
+    //BEGIN_INCLUDE(fragment)
     public static class CountingFragment extends Fragment {
         int mNum;
 
@@ -119,10 +119,10 @@ public class FragmentCustomAnimations extends Activity {
          */
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View v = inflater.inflate(R.layout.hello_world, container, false);
             View tv = v.findViewById(R.id.text);
-            ((TextView)tv).setText("Fragment #" + mNum);
+            ((TextView) tv).setText("Fragment #" + mNum);
             tv.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.gallery_thumb));
             return v;
         }

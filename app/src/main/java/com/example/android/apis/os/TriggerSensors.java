@@ -18,25 +18,25 @@ package com.example.android.apis.os;
 
 import android.app.Activity;
 import android.content.Context;
-import android.view.View;
 import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.hardware.TriggerEvent;
 import android.hardware.TriggerEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.TextView;
+
 import com.example.android.apis.R;
 
 /**
  * <h3>Application showing the Trigger Sensor API for the Significant Motion sensor. </h3>
-
-<p>This demonstrates the {@link android.hardware.SensorManager android.hardware.SensorManager
-   android.hardware.TriggerEventListener} class.
-
-<h4>Demo</h4>
-OS / TriggerSensors
-
-<h4>Source files</h4>
+ *
+ * <p>This demonstrates the {@link android.hardware.SensorManager android.hardware.SensorManager
+ * android.hardware.TriggerEventListener} class.
+ *
+ * <h4>Demo</h4>
+ * S / TriggerSensors
+ * <p>
+ * h4>Source files</h4>
  * <table class="LinkTable">
  *         <tr>
  *             <td >src/com.example.android.apis/os/TriggerSensors.java</td>
@@ -75,7 +75,7 @@ public class TriggerSensors extends Activity {
     protected void onResume() {
         super.onResume();
         if (mSigMotion != null && mSensorManager.requestTriggerSensor(mListener, mSigMotion))
-                mTextView.append(getString(R.string.sig_motion_enabled) + "\n");
+            mTextView.append(getString(R.string.sig_motion_enabled) + "\n");
     }
 
     @Override
@@ -96,9 +96,9 @@ public class TriggerSensors extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trigger_sensors);
-        mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mSigMotion = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
-        mTextView = (TextView)findViewById(R.id.text);
+        mTextView = (TextView) findViewById(R.id.text);
         mListener = new TriggerListener(this, mTextView);
         if (mSigMotion == null) {
             mTextView.append(getString(R.string.no_sig_motion) + "\n");

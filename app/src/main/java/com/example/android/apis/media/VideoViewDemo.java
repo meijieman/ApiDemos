@@ -16,13 +16,13 @@
 
 package com.example.android.apis.media;
 
-import com.example.android.apis.R;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.MediaController;
-import android.widget.Toast;
 import android.widget.VideoView;
+
+import com.example.android.apis.R;
 
 public class VideoViewDemo extends Activity {
 

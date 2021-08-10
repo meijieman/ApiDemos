@@ -24,6 +24,8 @@ import android.os.Bundle;
  * This sample shows how to implement a Matrix Palette
  */
 public class MatrixPaletteActivity extends Activity {
+    private GLSurfaceView mGLSurfaceView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +49,4 @@ public class MatrixPaletteActivity extends Activity {
         super.onPause();
         mGLSurfaceView.onPause();
     }
-
-    private GLSurfaceView mGLSurfaceView;
 }

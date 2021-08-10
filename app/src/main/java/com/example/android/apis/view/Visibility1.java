@@ -18,7 +18,6 @@ package com.example.android.apis.view;
 
 // Need the following import to get access to the app resources, since this
 // class is in a sub-package.
-import com.example.android.apis.R;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -26,14 +25,30 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.example.android.apis.R;
+
 
 /**
  * Demonstrates making a view VISIBLE, INVISIBLE and GONE
- *
  */
 public class Visibility1 extends Activity {
 
     private View mVictim;
+    OnClickListener mVisibleListener = new OnClickListener() {
+        public void onClick(View v) {
+            mVictim.setVisibility(View.VISIBLE);
+        }
+    };
+    OnClickListener mInvisibleListener = new OnClickListener() {
+        public void onClick(View v) {
+            mVictim.setVisibility(View.INVISIBLE);
+        }
+    };
+    OnClickListener mGoneListener = new OnClickListener() {
+        public void onClick(View v) {
+            mVictim.setVisibility(View.GONE);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,22 +68,4 @@ public class Visibility1 extends Activity {
         invisibleButton.setOnClickListener(mInvisibleListener);
         goneButton.setOnClickListener(mGoneListener);
     }
-
-    OnClickListener mVisibleListener = new OnClickListener() {
-        public void onClick(View v) {
-            mVictim.setVisibility(View.VISIBLE);
-        }
-    };
-
-    OnClickListener mInvisibleListener = new OnClickListener() {
-        public void onClick(View v) {
-            mVictim.setVisibility(View.INVISIBLE);
-        }
-    };
-
-    OnClickListener mGoneListener = new OnClickListener() {
-        public void onClick(View v) {
-            mVictim.setVisibility(View.GONE);
-        }
-    };
 }

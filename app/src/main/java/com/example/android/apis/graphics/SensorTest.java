@@ -17,7 +17,10 @@
 package com.example.android.apis.graphics;
 
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -28,56 +31,9 @@ import android.view.View;
 
 public class SensorTest extends GraphicsActivity {
     private final String TAG = "SensorTest";
-
-    private SensorManager mSensorManager;
-    private Sensor mSensor;
-    private SampleView mView;
-    private float[] mValues;
-
-    private static class RunAve {
-        private final float[] mWeights;
-        private final float mWeightScale;
-        private final float[] mSamples;
-        private final int mDepth;
-        private int mCurr;
-
-        public RunAve(float[] weights) {
-            mWeights = weights;
-
-            float sum = 0;
-            for (int i = 0; i < weights.length; i++) {
-                sum += weights[i];
-            }
-            mWeightScale = 1 / sum;
-
-            mDepth = weights.length;
-            mSamples = new float[mDepth];
-            mCurr = 0;
-        }
-
-        public void addSample(float value) {
-            mSamples[mCurr] = value;
-            mCurr = (mCurr + 1) % mDepth;
-        }
-
-        public float computeAve() {
-            final int depth = mDepth;
-            int index = mCurr;
-            float sum = 0;
-            for (int i = 0; i < depth; i++) {
-                sum += mWeights[i] * mSamples[index];
-                index -= 1;
-                if (index < 0) {
-                    index = depth - 1;
-                }
-            }
-            return sum * mWeightScale;
-        }
-    };
-
     private final SensorEventListener mListener = new SensorEventListener() {
 
-        private final float[] mScale = new float[] { 2, 2.5f, 0.5f };   // accel
+        private final float[] mScale = new float[]{2, 2.5f, 0.5f};   // accel
         private float[] mPrev = new float[3];
         private long mLastGestureTime;
 
@@ -133,11 +89,17 @@ public class SensorTest extends GraphicsActivity {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
     };
+    private SensorManager mSensorManager;
+    private Sensor mSensor;
+    private SampleView mView;
+    private float[] mValues;
+
+    ;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mView = new SampleView(this);
         setContentView(mView);
@@ -158,9 +120,50 @@ public class SensorTest extends GraphicsActivity {
         if (false) Log.d(TAG, "stop " + mSensorManager);
     }
 
+    private static class RunAve {
+        private final float[] mWeights;
+        private final float mWeightScale;
+        private final float[] mSamples;
+        private final int mDepth;
+        private int mCurr;
+
+        public RunAve(float[] weights) {
+            mWeights = weights;
+
+            float sum = 0;
+            for (int i = 0; i < weights.length; i++) {
+                sum += weights[i];
+            }
+            mWeightScale = 1 / sum;
+
+            mDepth = weights.length;
+            mSamples = new float[mDepth];
+            mCurr = 0;
+        }
+
+        public void addSample(float value) {
+            mSamples[mCurr] = value;
+            mCurr = (mCurr + 1) % mDepth;
+        }
+
+        public float computeAve() {
+            final int depth = mDepth;
+            int index = mCurr;
+            float sum = 0;
+            for (int i = 0; i < depth; i++) {
+                sum += mWeights[i] * mSamples[index];
+                index -= 1;
+                if (index < 0) {
+                    index = depth - 1;
+                }
+            }
+            return sum * mWeightScale;
+        }
+    }
+
     private class SampleView extends View {
-        private Paint   mPaint = new Paint();
-        private Path    mPath = new Path();
+        private Paint mPaint = new Paint();
+        private Path mPath = new Path();
         private boolean mAnimate;
 
         public SampleView(Context context) {
@@ -199,14 +202,14 @@ public class SensorTest extends GraphicsActivity {
         @Override
         protected void onAttachedToWindow() {
             mAnimate = true;
-            if (false) Log.d(TAG, "onAttachedToWindow. mAnimate="+mAnimate);
+            if (false) Log.d(TAG, "onAttachedToWindow. mAnimate=" + mAnimate);
             super.onAttachedToWindow();
         }
 
         @Override
         protected void onDetachedFromWindow() {
             mAnimate = false;
-            if (false) Log.d(TAG, "onAttachedToWindow. mAnimate="+mAnimate);
+            if (false) Log.d(TAG, "onAttachedToWindow. mAnimate=" + mAnimate);
             super.onDetachedFromWindow();
         }
     }

@@ -15,10 +15,6 @@
  */
 package com.example.android.apis.app;
 
-import java.util.ArrayList;
-
-import com.example.android.apis.R;
-
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -28,6 +24,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TabHost;
+
+import com.example.android.apis.R;
+
+import java.util.ArrayList;
 
 /**
  * Sample fragment that contains tabs of other fragments.
@@ -44,7 +44,7 @@ public class FragmentTabsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_tabs_fragment, container, false);
         TabHost host = mTabManager.handleCreateView(v);
 
@@ -95,35 +95,6 @@ public class FragmentTabsFragment extends Fragment {
         private boolean mInitialized;
         private String mCurrentTabTag;
 
-        static final class TabInfo {
-            private final String tag;
-            private final Class<?> clss;
-            private final Bundle args;
-            private Fragment fragment;
-
-            TabInfo(String _tag, Class<?> _class, Bundle _args) {
-                tag = _tag;
-                clss = _class;
-                args = _args;
-            }
-        }
-
-        static class DummyTabFactory implements TabHost.TabContentFactory {
-            private final Context mContext;
-
-            public DummyTabFactory(Context context) {
-                mContext = context;
-            }
-
-            @Override
-            public View createTabContent(String tag) {
-                View v = new View(mContext);
-                v.setMinimumWidth(0);
-                v.setMinimumHeight(0);
-                return v;
-            }
-        }
-
         public TabManager(Context context, FragmentManager manager, int containerId) {
             mContext = context;
             mManager = manager;
@@ -134,7 +105,7 @@ public class FragmentTabsFragment extends Fragment {
             if (mTabHost != null) {
                 throw new IllegalStateException("TabHost already set");
             }
-            mTabHost = (TabHost)root.findViewById(android.R.id.tabhost);
+            mTabHost = (TabHost) root.findViewById(android.R.id.tabhost);
             mTabHost.setup();
             mTabHost.setOnTabChangedListener(this);
             return mTabHost;
@@ -159,7 +130,7 @@ public class FragmentTabsFragment extends Fragment {
             // Go through all tabs and make sure their fragments match
             // the correct state.
             FragmentTransaction ft = null;
-            for (int i=0; i<mTabs.size(); i++) {
+            for (int i = 0; i < mTabs.size(); i++) {
                 TabInfo tab = mTabs.get(i);
                 tab.fragment = mManager.findFragmentByTag(tab.tag);
                 if (tab.fragment != null && !tab.fragment.isDetached()) {
@@ -214,7 +185,7 @@ public class FragmentTabsFragment extends Fragment {
 
         private FragmentTransaction doTabChanged(String tabId, FragmentTransaction ft) {
             TabInfo newTab = null;
-            for (int i=0; i<mTabs.size(); i++) {
+            for (int i = 0; i < mTabs.size(); i++) {
                 TabInfo tab = mTabs.get(i);
                 if (tab.tag.equals(tabId)) {
                     newTab = tab;
@@ -245,6 +216,35 @@ public class FragmentTabsFragment extends Fragment {
                 mLastTab = newTab;
             }
             return ft;
+        }
+
+        static final class TabInfo {
+            private final String tag;
+            private final Class<?> clss;
+            private final Bundle args;
+            private Fragment fragment;
+
+            TabInfo(String _tag, Class<?> _class, Bundle _args) {
+                tag = _tag;
+                clss = _class;
+                args = _args;
+            }
+        }
+
+        static class DummyTabFactory implements TabHost.TabContentFactory {
+            private final Context mContext;
+
+            public DummyTabFactory(Context context) {
+                mContext = context;
+            }
+
+            @Override
+            public View createTabContent(String tag) {
+                View v = new View(mContext);
+                v.setMinimumWidth(0);
+                v.setMinimumHeight(0);
+                return v;
+            }
         }
     }
 }

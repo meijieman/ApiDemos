@@ -16,11 +16,11 @@
 
 package com.example.android.apis.view;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Window;
+
+import com.example.android.apis.R;
 
 
 /**
@@ -35,9 +35,9 @@ public class ProgressBar2 extends Activity {
 
         // Request for the progress bar to be shown in the title
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        
+
         setContentView(R.layout.progressbar_2);
-        
+
         // Make sure the progress bar is visible
         setProgressBarVisibility(true);
     }

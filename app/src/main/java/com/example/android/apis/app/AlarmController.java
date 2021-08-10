@@ -18,18 +18,19 @@ package com.example.android.apis.app;
 
 // Need the following import to get access to the app resources, since this
 // class is in a sub-package.
-import com.example.android.apis.R;
 
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.os.SystemClock;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.example.android.apis.R;
 
 import java.util.Calendar;
 
@@ -38,49 +39,32 @@ import java.util.Calendar;
  * {@link OneShotAlarm} for the code run when the one-shot alarm goes off, and
  * {@link RepeatingAlarm} for the code run when the repeating alarm goes off.
  * <h4>Demo</h4>
-App/Service/Alarm Controller
- 
-<h4>Source files</h4>
-<table class="LinkTable">
-        <tr>
-            <td class="LinkColumn">src/com.example.android.apis/app/AlarmController.java</td>
-            <td class="DescrColumn">The activity that lets you schedule alarms</td>
-        </tr>
-        <tr>
-            <td class="LinkColumn">src/com.example.android.apis/app/OneShotAlarm.java</td>
-            <td class="DescrColumn">This is an intent receiver that executes when the
-                one-shot alarm goes off</td>
-        </tr>
-        <tr>
-            <td class="LinkColumn">src/com.example.android.apis/app/RepeatingAlarm.java</td>
-            <td class="DescrColumn">This is an intent receiver that executes when the
-                repeating alarm goes off</td>
-        </tr>
-        <tr>
-            <td class="LinkColumn">/res/any/layout/alarm_controller.xml</td>
-            <td class="DescrColumn">Defines contents of the screen</td>
-        </tr>
-</table>
-
+ * App/Service/Alarm Controller
+ *
+ * <h4>Source files</h4>
+ * <table class="LinkTable">
+ * <tr>
+ * <td class="LinkColumn">src/com.example.android.apis/app/AlarmController.java</td>
+ * <td class="DescrColumn">The activity that lets you schedule alarms</td>
+ * </tr>
+ * <tr>
+ * <td class="LinkColumn">src/com.example.android.apis/app/OneShotAlarm.java</td>
+ * <td class="DescrColumn">This is an intent receiver that executes when the
+ * one-shot alarm goes off</td>
+ * </tr>
+ * <tr>
+ * <td class="LinkColumn">src/com.example.android.apis/app/RepeatingAlarm.java</td>
+ * <td class="DescrColumn">This is an intent receiver that executes when the
+ * repeating alarm goes off</td>
+ * </tr>
+ * <tr>
+ * <td class="LinkColumn">/res/any/layout/alarm_controller.xml</td>
+ * <td class="DescrColumn">Defines contents of the screen</td>
+ * </tr>
+ * </table>
  */
 public class AlarmController extends Activity {
     Toast mToast;
-
-    @Override
-	protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.alarm_controller);
-
-        // Watch for button clicks.
-        Button button = (Button)findViewById(R.id.one_shot);
-        button.setOnClickListener(mOneShotListener);
-        button = (Button)findViewById(R.id.start_repeating);
-        button.setOnClickListener(mStartRepeatingListener);
-        button = (Button)findViewById(R.id.stop_repeating);
-        button.setOnClickListener(mStopRepeatingListener);
-    }
-
     private OnClickListener mOneShotListener = new OnClickListener() {
         public void onClick(View v) {
             // When the alarm goes off, we want to broadcast an Intent to our
@@ -98,7 +82,7 @@ public class AlarmController extends Activity {
             calendar.add(Calendar.SECOND, 30);
 
             // Schedule the alarm!
-            AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
+            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
             am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
 
             // Tell the user about what we did.
@@ -110,7 +94,6 @@ public class AlarmController extends Activity {
             mToast.show();
         }
     };
-
     private OnClickListener mStartRepeatingListener = new OnClickListener() {
         public void onClick(View v) {
             // When the alarm goes off, we want to broadcast an Intent to our
@@ -123,15 +106,15 @@ public class AlarmController extends Activity {
             Intent intent = new Intent(AlarmController.this, RepeatingAlarm.class);
             PendingIntent sender = PendingIntent.getBroadcast(AlarmController.this,
                     0, intent, 0);
-            
+
             // We want the alarm to go off 30 seconds from now.
             long firstTime = SystemClock.elapsedRealtime();
-            firstTime += 15*1000;
+            firstTime += 15 * 1000;
 
             // Schedule the alarm!
-            AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
+            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
             am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                            firstTime, 15*1000, sender);
+                    firstTime, 15 * 1000, sender);
 
             // Tell the user about what we did.
             if (mToast != null) {
@@ -142,7 +125,6 @@ public class AlarmController extends Activity {
             mToast.show();
         }
     };
-
     private OnClickListener mStopRepeatingListener = new OnClickListener() {
         public void onClick(View v) {
             // Create the same intent, and thus a matching IntentSender, for
@@ -150,9 +132,9 @@ public class AlarmController extends Activity {
             Intent intent = new Intent(AlarmController.this, RepeatingAlarm.class);
             PendingIntent sender = PendingIntent.getBroadcast(AlarmController.this,
                     0, intent, 0);
-            
+
             // And cancel the alarm.
-            AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
+            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
             am.cancel(sender);
 
             // Tell the user about what we did.
@@ -164,5 +146,20 @@ public class AlarmController extends Activity {
             mToast.show();
         }
     };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.alarm_controller);
+
+        // Watch for button clicks.
+        Button button = (Button) findViewById(R.id.one_shot);
+        button.setOnClickListener(mOneShotListener);
+        button = (Button) findViewById(R.id.start_repeating);
+        button.setOnClickListener(mStartRepeatingListener);
+        button = (Button) findViewById(R.id.stop_repeating);
+        button.setOnClickListener(mStopRepeatingListener);
+    }
 }
 

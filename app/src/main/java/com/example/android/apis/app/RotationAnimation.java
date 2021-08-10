@@ -16,8 +16,6 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Window;
@@ -26,6 +24,8 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
+
+import com.example.android.apis.R;
 
 
 public class RotationAnimation extends Activity {
@@ -40,34 +40,34 @@ public class RotationAnimation extends Activity {
 
         setContentView(R.layout.rotation_animation);
 
-        ((CheckBox)findViewById(R.id.windowFullscreen)).setOnCheckedChangeListener(
-            new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    setFullscreen(isChecked);
+        ((CheckBox) findViewById(R.id.windowFullscreen)).setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        setFullscreen(isChecked);
+                    }
                 }
-            }
         );
 
-        ((RadioGroup)findViewById(R.id.rotation_radio_group)).setOnCheckedChangeListener(
-            new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    switch (checkedId) {
-                        default:
-                        case R.id.rotate:
-                            mRotationAnimation = LayoutParams.ROTATION_ANIMATION_ROTATE;
-                            break;
-                        case R.id.crossfade:
-                            mRotationAnimation = LayoutParams.ROTATION_ANIMATION_CROSSFADE;
-                            break;
-                        case R.id.jumpcut:
-                            mRotationAnimation = LayoutParams.ROTATION_ANIMATION_JUMPCUT;
-                            break;
+        ((RadioGroup) findViewById(R.id.rotation_radio_group)).setOnCheckedChangeListener(
+                new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        switch (checkedId) {
+                            default:
+                            case R.id.rotate:
+                                mRotationAnimation = LayoutParams.ROTATION_ANIMATION_ROTATE;
+                                break;
+                            case R.id.crossfade:
+                                mRotationAnimation = LayoutParams.ROTATION_ANIMATION_CROSSFADE;
+                                break;
+                            case R.id.jumpcut:
+                                mRotationAnimation = LayoutParams.ROTATION_ANIMATION_JUMPCUT;
+                                break;
+                        }
+                        setRotationAnimation(mRotationAnimation);
                     }
-                    setRotationAnimation(mRotationAnimation);
                 }
-            }
         );
     }
 
@@ -75,7 +75,7 @@ public class RotationAnimation extends Activity {
         Window win = getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
         if (on) {
-            winParams.flags |=  WindowManager.LayoutParams.FLAG_FULLSCREEN;
+            winParams.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
         } else {
             winParams.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
         }

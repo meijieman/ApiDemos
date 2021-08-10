@@ -16,19 +16,18 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.example.android.apis.R;
 
 public class FragmentDialogOrActivity extends Activity {
     @Override
@@ -47,7 +46,7 @@ public class FragmentDialogOrActivity extends Activity {
         }
 
         // Watch for button clicks.
-        Button button = (Button)findViewById(R.id.show_dialog);
+        Button button = (Button) findViewById(R.id.show_dialog);
         button.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 showDialog();
@@ -55,7 +54,7 @@ public class FragmentDialogOrActivity extends Activity {
         });
     }
 
-//BEGIN_INCLUDE(show_dialog)
+    //BEGIN_INCLUDE(show_dialog)
     void showDialog() {
         // Create the fragment and show it as a dialog.
         DialogFragment newFragment = MyDialogFragment.newInstance();
@@ -63,7 +62,7 @@ public class FragmentDialogOrActivity extends Activity {
     }
 //END_INCLUDE(show_dialog)
 
-//BEGIN_INCLUDE(dialog)
+    //BEGIN_INCLUDE(dialog)
     public static class MyDialogFragment extends DialogFragment {
         static MyDialogFragment newInstance() {
             return new MyDialogFragment();
@@ -71,10 +70,10 @@ public class FragmentDialogOrActivity extends Activity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View v = inflater.inflate(R.layout.hello_world, container, false);
             View tv = v.findViewById(R.id.text);
-            ((TextView)tv).setText("This is an instance of MyDialogFragment");
+            ((TextView) tv).setText("This is an instance of MyDialogFragment");
             return v;
         }
     }

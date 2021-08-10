@@ -16,11 +16,8 @@
 
 package com.example.android.apis.security;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.security.keystore.KeyGenParameterSpec;
@@ -30,18 +27,16 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.example.android.apis.R;
+
 import java.io.IOException;
-import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -58,8 +53,6 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-
-import javax.security.auth.x500.X500Principal;
 
 public class KeyStoreUsage extends Activity {
     private static final String TAG = "AndroidKeyStoreUsage";
@@ -223,23 +216,6 @@ public class KeyStoreUsage extends Activity {
         updateKeyList();
     }
 
-    private class AliasAdapter extends ArrayAdapter<String> {
-        public AliasAdapter(Context context) {
-            // We want users to choose a key, so use the appropriate layout.
-            super(context, android.R.layout.simple_list_item_single_choice);
-        }
-
-        /**
-         * This clears out all previous aliases and replaces it with the
-         * current entries.
-         */
-        public void setAliases(List<String> items) {
-            clear();
-            addAll(items);
-            notifyDataSetChanged();
-        }
-    }
-
     private void updateKeyList() {
         setKeyActionButtonsEnabled(false);
         new UpdateKeyListTask().execute();
@@ -255,6 +231,23 @@ public class KeyStoreUsage extends Activity {
         mSignButton.setEnabled(enabled);
         mVerifyButton.setEnabled(enabled);
         mDeleteButton.setEnabled(enabled);
+    }
+
+    private class AliasAdapter extends ArrayAdapter<String> {
+        public AliasAdapter(Context context) {
+            // We want users to choose a key, so use the appropriate layout.
+            super(context, android.R.layout.simple_list_item_single_choice);
+        }
+
+        /**
+         * This clears out all previous aliases and replaces it with the
+         * current entries.
+         */
+        public void setAliases(List<String> items) {
+            clear();
+            addAll(items);
+            notifyDataSetChanged();
+        }
     }
 
     private class UpdateKeyListTask extends AsyncTask<Void, Void, Enumeration<String>> {
@@ -315,7 +308,7 @@ public class KeyStoreUsage extends Activity {
                         alias,
                         KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY)
                         .setDigests(KeyProperties.DIGEST_SHA256,
-                            KeyProperties.DIGEST_SHA512)
+                                KeyProperties.DIGEST_SHA512)
                         .build());
 
                 KeyPair kp = kpg.generateKeyPair();

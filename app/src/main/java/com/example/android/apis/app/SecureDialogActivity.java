@@ -16,14 +16,14 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+
+import com.example.android.apis.R;
 
 /**
  * <h3>Secure Dialog Activity</h3>
@@ -68,7 +68,7 @@ public class SecureDialogActivity extends Activity
         setContentView(R.layout.secure_dialog_activity);
 
         // Handle click events on the button to show the dialog.
-        Button button = (Button)findViewById(R.id.show);
+        Button button = (Button) findViewById(R.id.show);
         button.setOnClickListener(this);
     }
 

@@ -17,7 +17,15 @@
 package com.example.android.apis.graphics;
 
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Bitmap;
+import android.graphics.BlurMaskFilter;
+import android.graphics.Canvas;
+import android.graphics.EmbossMaskFilter;
+import android.graphics.MaskFilter;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +34,15 @@ import android.view.View;
 
 public class FingerPaint extends GraphicsActivity
         implements ColorPickerDialog.OnColorChangedListener {
+
+    private static final int COLOR_MENU_ID = Menu.FIRST;
+    private static final int EMBOSS_MENU_ID = Menu.FIRST + 1;
+    private static final int BLUR_MENU_ID = Menu.FIRST + 2;
+    private static final int ERASE_MENU_ID = Menu.FIRST + 3;
+    private static final int SRCATOP_MENU_ID = Menu.FIRST + 4;
+    private Paint mPaint;
+    private MaskFilter mEmboss;
+    private MaskFilter mBlur;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,107 +58,15 @@ public class FingerPaint extends GraphicsActivity
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeWidth(12);
 
-        mEmboss = new EmbossMaskFilter(new float[] { 1, 1, 1 },
-                                       0.4f, 6, 3.5f);
+        mEmboss = new EmbossMaskFilter(new float[]{1, 1, 1},
+                0.4f, 6, 3.5f);
 
         mBlur = new BlurMaskFilter(8, BlurMaskFilter.Blur.NORMAL);
     }
 
-    private Paint       mPaint;
-    private MaskFilter  mEmboss;
-    private MaskFilter  mBlur;
-
     public void colorChanged(int color) {
         mPaint.setColor(color);
     }
-
-    public class MyView extends View {
-
-        private static final float MINP = 0.25f;
-        private static final float MAXP = 0.75f;
-
-        private Bitmap  mBitmap;
-        private Canvas  mCanvas;
-        private Path    mPath;
-        private Paint   mBitmapPaint;
-
-        public MyView(Context c) {
-            super(c);
-
-            mPath = new Path();
-            mBitmapPaint = new Paint(Paint.DITHER_FLAG);
-        }
-
-        @Override
-        protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-            super.onSizeChanged(w, h, oldw, oldh);
-            mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-            mCanvas = new Canvas(mBitmap);
-        }
-
-        @Override
-        protected void onDraw(Canvas canvas) {
-            canvas.drawColor(0xFFAAAAAA);
-
-            canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
-
-            canvas.drawPath(mPath, mPaint);
-        }
-
-        private float mX, mY;
-        private static final float TOUCH_TOLERANCE = 4;
-
-        private void touch_start(float x, float y) {
-            mPath.reset();
-            mPath.moveTo(x, y);
-            mX = x;
-            mY = y;
-        }
-        private void touch_move(float x, float y) {
-            float dx = Math.abs(x - mX);
-            float dy = Math.abs(y - mY);
-            if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-                mPath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
-                mX = x;
-                mY = y;
-            }
-        }
-        private void touch_up() {
-            mPath.lineTo(mX, mY);
-            // commit the path to our offscreen
-            mCanvas.drawPath(mPath, mPaint);
-            // kill this so we don't double draw
-            mPath.reset();
-        }
-
-        @Override
-        public boolean onTouchEvent(MotionEvent event) {
-            float x = event.getX();
-            float y = event.getY();
-
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    touch_start(x, y);
-                    invalidate();
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    touch_move(x, y);
-                    invalidate();
-                    break;
-                case MotionEvent.ACTION_UP:
-                    touch_up();
-                    invalidate();
-                    break;
-            }
-            return true;
-        }
-    }
-
-    private static final int COLOR_MENU_ID = Menu.FIRST;
-    private static final int EMBOSS_MENU_ID = Menu.FIRST + 1;
-    private static final int BLUR_MENU_ID = Menu.FIRST + 2;
-    private static final int ERASE_MENU_ID = Menu.FIRST + 3;
-    private static final int SRCATOP_MENU_ID = Menu.FIRST + 4;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -154,13 +79,13 @@ public class FingerPaint extends GraphicsActivity
         menu.add(0, SRCATOP_MENU_ID, 0, "SrcATop").setShortcut('5', 'z');
 
         /****   Is this the mechanism to extend with filter effects?
-        Intent intent = new Intent(null, getIntent().getData());
-        intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
-        menu.addIntentOptions(
-                              Menu.ALTERNATIVE, 0,
-                              new ComponentName(this, NotesList.class),
-                              null, intent, 0, null);
-        *****/
+         Intent intent = new Intent(null, getIntent().getData());
+         intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+         menu.addIntentOptions(
+         Menu.ALTERNATIVE, 0,
+         new ComponentName(this, NotesList.class),
+         null, intent, 0, null);
+         *****/
         return true;
     }
 
@@ -195,14 +120,96 @@ public class FingerPaint extends GraphicsActivity
                 return true;
             case ERASE_MENU_ID:
                 mPaint.setXfermode(new PorterDuffXfermode(
-                                                        PorterDuff.Mode.CLEAR));
+                        PorterDuff.Mode.CLEAR));
                 return true;
             case SRCATOP_MENU_ID:
                 mPaint.setXfermode(new PorterDuffXfermode(
-                                                    PorterDuff.Mode.SRC_ATOP));
+                        PorterDuff.Mode.SRC_ATOP));
                 mPaint.setAlpha(0x80);
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public class MyView extends View {
+
+        private static final float MINP = 0.25f;
+        private static final float MAXP = 0.75f;
+        private static final float TOUCH_TOLERANCE = 4;
+        private Bitmap mBitmap;
+        private Canvas mCanvas;
+        private Path mPath;
+        private Paint mBitmapPaint;
+        private float mX, mY;
+
+        public MyView(Context c) {
+            super(c);
+
+            mPath = new Path();
+            mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+        }
+
+        @Override
+        protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+            super.onSizeChanged(w, h, oldw, oldh);
+            mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            mCanvas = new Canvas(mBitmap);
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            canvas.drawColor(0xFFAAAAAA);
+
+            canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
+
+            canvas.drawPath(mPath, mPaint);
+        }
+
+        private void touch_start(float x, float y) {
+            mPath.reset();
+            mPath.moveTo(x, y);
+            mX = x;
+            mY = y;
+        }
+
+        private void touch_move(float x, float y) {
+            float dx = Math.abs(x - mX);
+            float dy = Math.abs(y - mY);
+            if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+                mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+                mX = x;
+                mY = y;
+            }
+        }
+
+        private void touch_up() {
+            mPath.lineTo(mX, mY);
+            // commit the path to our offscreen
+            mCanvas.drawPath(mPath, mPaint);
+            // kill this so we don't double draw
+            mPath.reset();
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            float x = event.getX();
+            float y = event.getY();
+
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    touch_start(x, y);
+                    invalidate();
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    touch_move(x, y);
+                    invalidate();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    touch_up();
+                    invalidate();
+                    break;
+            }
+            return true;
+        }
     }
 }

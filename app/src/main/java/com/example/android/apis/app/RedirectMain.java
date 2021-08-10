@@ -16,8 +16,6 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,23 +25,41 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.android.apis.R;
+
 /**
  * Entry into our redirection example, describing what will happen.
  */
 public class RedirectMain extends Activity {
     static final int INIT_TEXT_REQUEST = 0;
     static final int NEW_TEXT_REQUEST = 1;
+    private OnClickListener mClearListener = new OnClickListener() {
+        public void onClick(View v) {
+            // Erase the preferences and exit!
+            SharedPreferences preferences = getSharedPreferences("RedirectData", 0);
+            preferences.edit().remove("text").commit();
+            finish();
+        }
+    };
+    private OnClickListener mNewListener = new OnClickListener() {
+        public void onClick(View v) {
+            // Retrieve new text preferences.
+            Intent intent = new Intent(RedirectMain.this, RedirectGetter.class);
+            startActivityForResult(intent, NEW_TEXT_REQUEST);
+        }
+    };
+    private String mTextPref;
 
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.redirect_main);
 
         // Watch for button clicks.
-        Button clearButton = (Button)findViewById(R.id.clear);
+        Button clearButton = (Button) findViewById(R.id.clear);
         clearButton.setOnClickListener(mClearListener);
-        Button newButton = (Button)findViewById(R.id.newView);
+        Button newButton = (Button) findViewById(R.id.newView);
         newButton.setOnClickListener(mNewListener);
 
         // Retrieve the current text preference.  If there is no text
@@ -58,17 +74,17 @@ public class RedirectMain extends Activity {
     }
 
     @Override
-	protected void onActivityResult(int requestCode, int resultCode,
-		Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
         if (requestCode == INIT_TEXT_REQUEST) {
 
             // If the request was cancelled, then we are cancelled as well.
             if (resultCode == RESULT_CANCELED) {
                 finish();
 
-            // Otherwise, there now should be text...  reload the prefs,
-            // and show our UI.  (Optionally we could verify that the text
-            // is now set and exit if it isn't.)
+                // Otherwise, there now should be text...  reload the prefs,
+                // and show our UI.  (Optionally we could verify that the text
+                // is now set and exit if it isn't.)
             } else {
                 loadPrefs();
             }
@@ -93,30 +109,11 @@ public class RedirectMain extends Activity {
 
         mTextPref = preferences.getString("text", null);
         if (mTextPref != null) {
-            TextView text = (TextView)findViewById(R.id.text);
+            TextView text = (TextView) findViewById(R.id.text);
             text.setText(mTextPref);
             return true;
         }
 
         return false;
     }
-
-    private OnClickListener mClearListener = new OnClickListener() {
-        public void onClick(View v) {
-            // Erase the preferences and exit!
-            SharedPreferences preferences = getSharedPreferences("RedirectData", 0);
-            preferences.edit().remove("text").commit();
-            finish();
-        }
-    };
-
-    private OnClickListener mNewListener = new OnClickListener() {
-        public void onClick(View v) {
-            // Retrieve new text preferences.
-            Intent intent = new Intent(RedirectMain.this, RedirectGetter.class);
-            startActivityForResult(intent, NEW_TEXT_REQUEST);
-        }
-    };
-
-    private String mTextPref;
 }

@@ -16,8 +16,6 @@
 
 package com.example.android.apis.os;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -36,20 +34,22 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.example.android.apis.R;
 
+import java.util.List;
+
 public class SmsMessagingDemo extends Activity {
-    /** Tag string for our debug logs */
-    private static final String TAG = "SmsMessagingDemo";
-
     public static final String SMS_RECIPIENT_EXTRA = "com.example.android.apis.os.SMS_RECIPIENT";
-
     public static final String ACTION_SMS_SENT = "com.example.android.apis.os.SMS_SENT_ACTION";
+    /**
+     * Tag string for our debug logs
+     */
+    private static final String TAG = "SmsMessagingDemo";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +72,7 @@ public class SmsMessagingDemo extends Activity {
                 "com.example.android.apis.os.SmsMessageReceiver");
 
         enableCheckBox.setChecked(pm.getComponentEnabledSetting(componentName) ==
-                                  PackageManager.COMPONENT_ENABLED_STATE_ENABLED);
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED);
 
         enableCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -129,22 +129,22 @@ public class SmsMessagingDemo extends Activity {
                 String message = null;
                 boolean error = true;
                 switch (getResultCode()) {
-                case Activity.RESULT_OK:
-                    message = "Message sent!";
-                    error = false;
-                    break;
-                case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                    message = "Error.";
-                    break;
-                case SmsManager.RESULT_ERROR_NO_SERVICE:
-                    message = "Error: No service.";
-                    break;
-                case SmsManager.RESULT_ERROR_NULL_PDU:
-                    message = "Error: Null PDU.";
-                    break;
-                case SmsManager.RESULT_ERROR_RADIO_OFF:
-                    message = "Error: Radio off.";
-                    break;
+                    case Activity.RESULT_OK:
+                        message = "Message sent!";
+                        error = false;
+                        break;
+                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                        message = "Error.";
+                        break;
+                    case SmsManager.RESULT_ERROR_NO_SERVICE:
+                        message = "Error: No service.";
+                        break;
+                    case SmsManager.RESULT_ERROR_NULL_PDU:
+                        message = "Error: Null PDU.";
+                        break;
+                    case SmsManager.RESULT_ERROR_RADIO_OFF:
+                        message = "Error: Radio off.";
+                        break;
                 }
 
                 recipientTextEdit.setEnabled(true);

@@ -18,30 +18,39 @@ package com.example.android.apis.view;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
 import android.widget.ImageView;
-import android.graphics.BitmapFactory;
-import android.graphics.Bitmap;
+import android.widget.TextView;
+
 import com.example.android.apis.R;
 
 /**
  * Demonstrates how to write an efficient list adapter. The adapter used in this example binds
  * to an ImageView and to a TextView for each row in the list.
- *
+ * <p>
  * To work efficiently the adapter implemented here uses two techniques:
  * - It reuses the convertView passed to getView() to avoid inflating View when it is not necessary
  * - It uses the ViewHolder pattern to avoid calling findViewById() when it is not necessary
- *
+ * <p>
  * The ViewHolder pattern consists in storing a data structure in the tag of the view returned by
  * getView(). This data structures contains references to the views we want to bind data to, thus
  * avoiding calls to findViewById() every time getView() is invoked.
  */
 public class List14 extends ListActivity {
+
+    private static final String[] DATA = Cheeses.sCheeseStrings;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setListAdapter(new EfficientAdapter(this));
+    }
 
     private static class EfficientAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
@@ -92,7 +101,7 @@ public class List14 extends ListActivity {
          * Make a view to hold each row.
          *
          * @see android.widget.ListAdapter#getView(int, android.view.View,
-         *      android.view.ViewGroup)
+         * android.view.ViewGroup)
          */
         public View getView(int position, View convertView, ViewGroup parent) {
             // A ViewHolder keeps references to children views to avoid unneccessary calls
@@ -130,12 +139,4 @@ public class List14 extends ListActivity {
             ImageView icon;
         }
     }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setListAdapter(new EfficientAdapter(this));
-    }
-
-    private static final String[] DATA = Cheeses.sCheeseStrings;
 }

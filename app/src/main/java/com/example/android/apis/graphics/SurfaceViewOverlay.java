@@ -23,8 +23,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-//Need the following import to get access to the app resources, since this
-//class is in a sub-package.
 import com.example.android.apis.R;
 
 /**
@@ -34,6 +32,27 @@ public class SurfaceViewOverlay extends Activity {
     View mVictimContainer;
     View mVictim1;
     View mVictim2;
+    OnClickListener mVisibleListener = new OnClickListener() {
+        public void onClick(View v) {
+            mVictim1.setVisibility(View.VISIBLE);
+            mVictim2.setVisibility(View.VISIBLE);
+            mVictimContainer.setVisibility(View.VISIBLE);
+        }
+    };
+    OnClickListener mInvisibleListener = new OnClickListener() {
+        public void onClick(View v) {
+            mVictim1.setVisibility(View.INVISIBLE);
+            mVictim2.setVisibility(View.INVISIBLE);
+            mVictimContainer.setVisibility(View.INVISIBLE);
+        }
+    };
+    OnClickListener mGoneListener = new OnClickListener() {
+        public void onClick(View v) {
+            mVictim1.setVisibility(View.GONE);
+            mVictim2.setVisibility(View.GONE);
+            mVictimContainer.setVisibility(View.GONE);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +61,7 @@ public class SurfaceViewOverlay extends Activity {
         setContentView(R.layout.surface_view_overlay);
 
         GLSurfaceView glSurfaceView =
-            (GLSurfaceView) findViewById(R.id.glsurfaceview);
+                (GLSurfaceView) findViewById(R.id.glsurfaceview);
         glSurfaceView.setRenderer(new CubeRenderer(false));
 
         // Find the views whose visibility will change
@@ -89,28 +108,4 @@ public class SurfaceViewOverlay extends Activity {
         }
 
     }
-
-    OnClickListener mVisibleListener = new OnClickListener() {
-        public void onClick(View v) {
-            mVictim1.setVisibility(View.VISIBLE);
-            mVictim2.setVisibility(View.VISIBLE);
-            mVictimContainer.setVisibility(View.VISIBLE);
-        }
-    };
-
-    OnClickListener mInvisibleListener = new OnClickListener() {
-        public void onClick(View v) {
-            mVictim1.setVisibility(View.INVISIBLE);
-            mVictim2.setVisibility(View.INVISIBLE);
-            mVictimContainer.setVisibility(View.INVISIBLE);
-        }
-    };
-
-    OnClickListener mGoneListener = new OnClickListener() {
-        public void onClick(View v) {
-            mVictim1.setVisibility(View.GONE);
-            mVictim2.setVisibility(View.GONE);
-            mVictimContainer.setVisibility(View.GONE);
-        }
-    };
 }

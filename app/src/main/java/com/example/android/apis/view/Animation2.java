@@ -18,7 +18,6 @@ package com.example.android.apis.view;
 
 // Need the following import to get access to the app resources, since this
 // class is in a sub-package.
-import com.example.android.apis.R;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -29,9 +28,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.ViewFlipper;
 
+import com.example.android.apis.R;
+
 
 public class Animation2 extends Activity implements
         AdapterView.OnItemSelectedListener {
+
+    private String[] mStrings = {
+            "Push up", "Push left", "Cross fade", "Hyperspace"};
+    private ViewFlipper mFlipper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,39 +57,34 @@ public class Animation2 extends Activity implements
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
         switch (position) {
 
-        case 0:
-            mFlipper.setInAnimation(AnimationUtils.loadAnimation(this,
-                    R.anim.push_up_in));
-            mFlipper.setOutAnimation(AnimationUtils.loadAnimation(this,
-                    R.anim.push_up_out));
-            break;
-        case 1:
-            mFlipper.setInAnimation(AnimationUtils.loadAnimation(this,
-                    R.anim.push_left_in));
-            mFlipper.setOutAnimation(AnimationUtils.loadAnimation(this,
-                    R.anim.push_left_out));
-            break;
-        case 2:
-            mFlipper.setInAnimation(AnimationUtils.loadAnimation(this,
-                    android.R.anim.fade_in));
-            mFlipper.setOutAnimation(AnimationUtils.loadAnimation(this,
-                    android.R.anim.fade_out));
-            break;
-        default:
-            mFlipper.setInAnimation(AnimationUtils.loadAnimation(this,
-                    R.anim.hyperspace_in));
-            mFlipper.setOutAnimation(AnimationUtils.loadAnimation(this,
-                    R.anim.hyperspace_out));
-            break;
+            case 0:
+                mFlipper.setInAnimation(AnimationUtils.loadAnimation(this,
+                        R.anim.push_up_in));
+                mFlipper.setOutAnimation(AnimationUtils.loadAnimation(this,
+                        R.anim.push_up_out));
+                break;
+            case 1:
+                mFlipper.setInAnimation(AnimationUtils.loadAnimation(this,
+                        R.anim.push_left_in));
+                mFlipper.setOutAnimation(AnimationUtils.loadAnimation(this,
+                        R.anim.push_left_out));
+                break;
+            case 2:
+                mFlipper.setInAnimation(AnimationUtils.loadAnimation(this,
+                        android.R.anim.fade_in));
+                mFlipper.setOutAnimation(AnimationUtils.loadAnimation(this,
+                        android.R.anim.fade_out));
+                break;
+            default:
+                mFlipper.setInAnimation(AnimationUtils.loadAnimation(this,
+                        R.anim.hyperspace_in));
+                mFlipper.setOutAnimation(AnimationUtils.loadAnimation(this,
+                        R.anim.hyperspace_out));
+                break;
         }
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
     }
-
-    private String[] mStrings = {
-            "Push up", "Push left", "Cross fade", "Hyperspace"};
-
-    private ViewFlipper mFlipper;
 
 }

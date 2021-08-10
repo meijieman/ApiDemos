@@ -16,9 +16,6 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-import com.example.android.apis.graphics.CubeRenderer;
-
 import android.app.Activity;
 import android.app.MediaRouteActionProvider;
 import android.app.Presentation;
@@ -37,7 +34,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.example.android.apis.R;
+import com.example.android.apis.graphics.CubeRenderer;
+
 //BEGIN_INCLUDE(activity)
+
 /**
  * <h3>Presentation Activity</h3>
  *
@@ -72,6 +73,40 @@ public class PresentationWithMediaRouterActivity extends Activity {
     private GLSurfaceView mSurfaceView;
     private TextView mInfoTextView;
     private boolean mPaused;
+    /**
+     * Listens for when presentations are dismissed.
+     */
+    private final DialogInterface.OnDismissListener mOnDismissListener =
+            new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    if (dialog == mPresentation) {
+                        Log.i(TAG, "Presentation was dismissed.");
+                        mPresentation = null;
+                        updateContents();
+                    }
+                }
+            };
+    private final MediaRouter.SimpleCallback mMediaRouterCallback =
+            new MediaRouter.SimpleCallback() {
+                @Override
+                public void onRouteSelected(MediaRouter router, int type, RouteInfo info) {
+                    Log.d(TAG, "onRouteSelected: type=" + type + ", info=" + info);
+                    updatePresentation();
+                }
+
+                @Override
+                public void onRouteUnselected(MediaRouter router, int type, RouteInfo info) {
+                    Log.d(TAG, "onRouteUnselected: type=" + type + ", info=" + info);
+                    updatePresentation();
+                }
+
+                @Override
+                public void onRoutePresentationDisplayChanged(MediaRouter router, RouteInfo info) {
+                    Log.d(TAG, "onRoutePresentationDisplayChanged: info=" + info);
+                    updatePresentation();
+                }
+            };
 
     /**
      * Initialization of the Activity after it is first created.  Must at least
@@ -84,7 +119,7 @@ public class PresentationWithMediaRouterActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         // Get the media router service.
-        mMediaRouter = (MediaRouter)getSystemService(Context.MEDIA_ROUTER_SERVICE);
+        mMediaRouter = (MediaRouter) getSystemService(Context.MEDIA_ROUTER_SERVICE);
 
         // See assets/res/any/layout/presentation_with_media_router_activity.xml for this
         // view layout definition, which is being set here as
@@ -92,11 +127,11 @@ public class PresentationWithMediaRouterActivity extends Activity {
         setContentView(R.layout.presentation_with_media_router_activity);
 
         // Set up the surface view for visual interest.
-        mSurfaceView = (GLSurfaceView)findViewById(R.id.surface_view);
+        mSurfaceView = (GLSurfaceView) findViewById(R.id.surface_view);
         mSurfaceView.setRenderer(new CubeRenderer(false));
 
         // Get a text view where we will show information about what's happening.
-        mInfoTextView = (TextView)findViewById(R.id.info);
+        mInfoTextView = (TextView) findViewById(R.id.info);
     }
 
     @Override
@@ -148,7 +183,7 @@ public class PresentationWithMediaRouterActivity extends Activity {
 
         MenuItem mediaRouteMenuItem = menu.findItem(R.id.menu_media_route);
         MediaRouteActionProvider mediaRouteActionProvider =
-                (MediaRouteActionProvider)mediaRouteMenuItem.getActionProvider();
+                (MediaRouteActionProvider) mediaRouteMenuItem.getActionProvider();
         mediaRouteActionProvider.setRouteTypes(MediaRouter.ROUTE_TYPE_LIVE_VIDEO);
 
         // Return true to show the menu.
@@ -214,42 +249,6 @@ public class PresentationWithMediaRouterActivity extends Activity {
         }
     }
 
-    private final MediaRouter.SimpleCallback mMediaRouterCallback =
-            new MediaRouter.SimpleCallback() {
-        @Override
-        public void onRouteSelected(MediaRouter router, int type, RouteInfo info) {
-            Log.d(TAG, "onRouteSelected: type=" + type + ", info=" + info);
-            updatePresentation();
-        }
-
-        @Override
-        public void onRouteUnselected(MediaRouter router, int type, RouteInfo info) {
-            Log.d(TAG, "onRouteUnselected: type=" + type + ", info=" + info);
-            updatePresentation();
-        }
-
-        @Override
-        public void onRoutePresentationDisplayChanged(MediaRouter router, RouteInfo info) {
-            Log.d(TAG, "onRoutePresentationDisplayChanged: info=" + info);
-            updatePresentation();
-        }
-    };
-
-    /**
-     * Listens for when presentations are dismissed.
-     */
-    private final DialogInterface.OnDismissListener mOnDismissListener =
-            new DialogInterface.OnDismissListener() {
-        @Override
-        public void onDismiss(DialogInterface dialog) {
-            if (dialog == mPresentation) {
-                Log.i(TAG, "Presentation was dismissed.");
-                mPresentation = null;
-                updateContents();
-            }
-        }
-    };
-
     /**
      * The presentation to show on the secondary display.
      * <p>
@@ -278,7 +277,7 @@ public class PresentationWithMediaRouterActivity extends Activity {
             setContentView(R.layout.presentation_with_media_router_content);
 
             // Set up the surface view for visual interest.
-            mSurfaceView = (GLSurfaceView)findViewById(R.id.surface_view);
+            mSurfaceView = (GLSurfaceView) findViewById(R.id.surface_view);
             mSurfaceView.setRenderer(new CubeRenderer(false));
         }
 

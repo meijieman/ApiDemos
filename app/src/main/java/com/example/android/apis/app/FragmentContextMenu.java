@@ -16,20 +16,19 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Toast;
+
+import com.example.android.apis.R;
 
 /**
  * Demonstration of displaying a context menu from a fragment.
@@ -49,7 +48,7 @@ public class FragmentContextMenu extends Activity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View root = inflater.inflate(R.layout.fragment_context_menu, container, false);
             registerForContextMenu(root.findViewById(R.id.long_press));
             return root;

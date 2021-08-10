@@ -16,16 +16,20 @@
 
 package com.example.android.apis.graphics;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Movie;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.view.View;
+
 import com.example.android.apis.R;
 
-import android.content.Context;
-import android.graphics.*;
-import android.graphics.drawable.*;
-import android.os.Bundle;
-import android.view.*;
-
-import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 public class BitmapDecode extends GraphicsActivity {
 
@@ -36,30 +40,15 @@ public class BitmapDecode extends GraphicsActivity {
     }
 
     private static class SampleView extends View {
+        //Set to false to use decodeByteArray
+        private static final boolean DECODE_STREAM = true;
         private Bitmap mBitmap;
         private Bitmap mBitmap2;
         private Bitmap mBitmap3;
         private Bitmap mBitmap4;
         private Drawable mDrawable;
-
         private Movie mMovie;
         private long mMovieStart;
-
-        //Set to false to use decodeByteArray
-        private static final boolean DECODE_STREAM = true;
-
-        private static byte[] streamToBytes(InputStream is) {
-            ByteArrayOutputStream os = new ByteArrayOutputStream(1024);
-            byte[] buffer = new byte[1024];
-            int len;
-            try {
-                while ((len = is.read(buffer)) >= 0) {
-                    os.write(buffer, 0, len);
-                }
-            } catch (java.io.IOException e) {
-            }
-            return os.toByteArray();
-        }
 
         public SampleView(Context context) {
             super(context);
@@ -90,12 +79,12 @@ public class BitmapDecode extends GraphicsActivity {
             // create a deep copy of it using getPixels() into different configs
             int w = mBitmap2.getWidth();
             int h = mBitmap2.getHeight();
-            int[] pixels = new int[w*h];
+            int[] pixels = new int[w * h];
             mBitmap2.getPixels(pixels, 0, w, 0, 0, w, h);
             mBitmap3 = Bitmap.createBitmap(pixels, 0, w, w, h,
-                                           Bitmap.Config.ARGB_8888);
+                    Bitmap.Config.ARGB_8888);
             mBitmap4 = Bitmap.createBitmap(pixels, 0, w, w, h,
-                                           Bitmap.Config.ARGB_4444);
+                    Bitmap.Config.ARGB_4444);
 
             mDrawable = context.getResources().getDrawable(R.drawable.button);
             mDrawable.setBounds(150, 20, 300, 100);
@@ -108,6 +97,19 @@ public class BitmapDecode extends GraphicsActivity {
                 byte[] array = streamToBytes(is);
                 mMovie = Movie.decodeByteArray(array, 0, array.length);
             }
+        }
+
+        private static byte[] streamToBytes(InputStream is) {
+            ByteArrayOutputStream os = new ByteArrayOutputStream(1024);
+            byte[] buffer = new byte[1024];
+            int len;
+            try {
+                while ((len = is.read(buffer)) >= 0) {
+                    os.write(buffer, 0, len);
+                }
+            } catch (java.io.IOException e) {
+            }
+            return os.toByteArray();
         }
 
         @Override
@@ -133,10 +135,10 @@ public class BitmapDecode extends GraphicsActivity {
                 if (dur == 0) {
                     dur = 1000;
                 }
-                int relTime = (int)((now - mMovieStart) % dur);
+                int relTime = (int) ((now - mMovieStart) % dur);
                 mMovie.setTime(relTime);
                 mMovie.draw(canvas, getWidth() - mMovie.width(),
-                            getHeight() - mMovie.height());
+                        getHeight() - mMovie.height());
                 invalidate();
             }
         }

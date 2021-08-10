@@ -19,8 +19,8 @@ package com.example.android.apis.view;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Paint.Style;
+import android.graphics.Path;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.os.Vibrator;
@@ -36,7 +36,7 @@ import java.util.Random;
 
 /**
  * A trivial joystick based physics game to demonstrate joystick handling.
- *
+ * <p>
  * If the game controller has a vibrator, then it is used to provide feedback
  * when a bullet is fired or the ship crashes into an obstacle.  Otherwise, the
  * system vibrator is used for that purpose.
@@ -44,22 +44,18 @@ import java.util.Random;
  * @see GameControllerInput
  */
 public class GameView extends View {
+    private static final int DPAD_STATE_LEFT = 1 << 0;
+    private static final int DPAD_STATE_RIGHT = 1 << 1;
+    private static final int DPAD_STATE_UP = 1 << 2;
+    private static final int DPAD_STATE_DOWN = 1 << 3;
     private final long ANIMATION_TIME_STEP = 1000 / 60;
     private final int MAX_OBSTACLES = 12;
-
     private final Random mRandom;
-    private Ship mShip;
     private final List<Bullet> mBullets;
     private final List<Obstacle> mObstacles;
-
+    private Ship mShip;
     private long mLastStepTime;
     private InputDevice mLastInputDevice;
-
-    private static final int DPAD_STATE_LEFT  = 1 << 0;
-    private static final int DPAD_STATE_RIGHT = 1 << 1;
-    private static final int DPAD_STATE_UP    = 1 << 2;
-    private static final int DPAD_STATE_DOWN  = 1 << 3;
-
     private int mDPadState;
 
     private float mShipSize;
@@ -104,6 +100,44 @@ public class GameView extends View {
         mMaxObstacleSize = baseSize * 12;
         mMinObstacleSpeed = baseSpeed;
         mMaxObstacleSpeed = baseSpeed * 3;
+    }
+
+    private static boolean isFireKey(int keyCode) {
+        return KeyEvent.isGamepadButton(keyCode)
+                || keyCode == KeyEvent.KEYCODE_DPAD_CENTER
+                || keyCode == KeyEvent.KEYCODE_SPACE;
+    }
+
+    private static float getCenteredAxis(MotionEvent event, InputDevice device,
+                                         int axis, int historyPos) {
+        final InputDevice.MotionRange range = device.getMotionRange(axis, event.getSource());
+        if (range != null) {
+            final float flat = range.getFlat();
+            final float value = historyPos < 0 ? event.getAxisValue(axis)
+                    : event.getHistoricalAxisValue(axis, historyPos);
+
+            // Ignore axis values that are within the 'flat' region of the joystick axis center.
+            // A joystick at rest does not always report an absolute position of (0,0).
+            if (Math.abs(value) > flat) {
+                return value;
+            }
+        }
+        return 0;
+    }
+
+    static float pythag(float x, float y) {
+        return (float) Math.hypot(x, y);
+    }
+
+    static int blend(float alpha, int from, int to) {
+        return from + (int) ((to - from) * alpha);
+    }
+
+    static void setPaintARGBBlend(Paint paint, float alpha,
+                                  int a1, int r1, int g1, int b1,
+                                  int a2, int r2, int g2, int b2) {
+        paint.setARGB(blend(alpha, a1, a2), blend(alpha, r1, r2),
+                blend(alpha, g1, g2), blend(alpha, b1, b2));
     }
 
     @Override
@@ -197,12 +231,6 @@ public class GameView extends View {
         return super.onKeyUp(keyCode, event);
     }
 
-    private static boolean isFireKey(int keyCode) {
-        return KeyEvent.isGamepadButton(keyCode)
-                || keyCode == KeyEvent.KEYCODE_DPAD_CENTER
-                || keyCode == KeyEvent.KEYCODE_SPACE;
-    }
-
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         ensureInitialized();
@@ -267,23 +295,6 @@ public class GameView extends View {
         step(historyPos < 0 ? event.getEventTime() : event.getHistoricalEventTime(historyPos));
     }
 
-    private static float getCenteredAxis(MotionEvent event, InputDevice device,
-            int axis, int historyPos) {
-        final InputDevice.MotionRange range = device.getMotionRange(axis, event.getSource());
-        if (range != null) {
-            final float flat = range.getFlat();
-            final float value = historyPos < 0 ? event.getAxisValue(axis)
-                    : event.getHistoricalAxisValue(axis, historyPos);
-
-            // Ignore axis values that are within the 'flat' region of the joystick axis center.
-            // A joystick at rest does not always report an absolute position of (0,0).
-            if (Math.abs(value) > flat) {
-                return value;
-            }
-        }
-        return 0;
-    }
-
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         // Turn on and off animations based on the window focus.
@@ -324,7 +335,7 @@ public class GameView extends View {
     }
 
     private void crash() {
-        getVibrator().vibrate(new long[] { 0, 20, 20, 40, 40, 80, 40, 300 }, -1);
+        getVibrator().vibrate(new long[]{0, 20, 20, 40, 40, 80, 40, 300}, -1);
     }
 
     private void reset() {
@@ -340,7 +351,7 @@ public class GameView extends View {
                 return vibrator;
             }
         }
-        return (Vibrator)getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        return (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     void animateFrame() {
@@ -413,7 +424,8 @@ public class GameView extends View {
 
         // Spawn more obstacles offscreen when needed.
         // Avoid putting them right on top of the ship.
-        OuterLoop: while (mObstacles.size() < MAX_OBSTACLES) {
+        OuterLoop:
+        while (mObstacles.size() < MAX_OBSTACLES) {
             final float minDistance = mShipSize * 4;
             float size = mRandom.nextFloat() * (mMaxObstacleSize - mMinObstacleSize)
                     + mMinObstacleSize;
@@ -482,21 +494,6 @@ public class GameView extends View {
         }
     }
 
-    static float pythag(float x, float y) {
-        return (float) Math.hypot(x, y);
-    }
-
-    static int blend(float alpha, int from, int to) {
-        return from + (int) ((to - from) * alpha);
-    }
-
-    static void setPaintARGBBlend(Paint paint, float alpha,
-            int a1, int r1, int g1, int b1,
-            int a2, int r2, int g2, int b2) {
-        paint.setARGB(blend(alpha, a1, a2), blend(alpha, r1, r2),
-                blend(alpha, g1, g2), blend(alpha, b1, b2));
-    }
-
     private abstract class Sprite {
         protected float mPositionX;
         protected float mPositionY;
@@ -532,7 +529,7 @@ public class GameView extends View {
             // Really bad collision detection.
             return !mDestroyed && !other.mDestroyed
                     && distanceTo(other) <= Math.max(mSize, other.mSize)
-                            + Math.min(mSize, other.mSize) * 0.5f;
+                    + Math.min(mSize, other.mSize) * 0.5f;
         }
 
         public boolean isDestroyed() {
@@ -589,13 +586,12 @@ public class GameView extends View {
     private class Ship extends Sprite {
         private static final float CORNER_ANGLE = (float) Math.PI * 2 / 3;
         private static final float TO_DEGREES = (float) (180.0 / Math.PI);
-
+        private final Paint mPaint;
+        private final Path mPath;
         private float mHeadingX;
         private float mHeadingY;
         private float mHeadingAngle;
         private float mHeadingMagnitude;
-        private final Paint mPaint;
-        private final Path mPath;
 
 
         public Ship() {
@@ -608,11 +604,11 @@ public class GameView extends View {
 
             mPath = new Path();
             mPath.moveTo(0, 0);
-            mPath.lineTo((float)Math.cos(-CORNER_ANGLE) * mSize,
-                    (float)Math.sin(-CORNER_ANGLE) * mSize);
+            mPath.lineTo((float) Math.cos(-CORNER_ANGLE) * mSize,
+                    (float) Math.sin(-CORNER_ANGLE) * mSize);
             mPath.lineTo(mSize, 0);
-            mPath.lineTo((float)Math.cos(CORNER_ANGLE) * mSize,
-                    (float)Math.sin(CORNER_ANGLE) * mSize);
+            mPath.lineTo((float) Math.cos(CORNER_ANGLE) * mSize,
+                    (float) Math.sin(CORNER_ANGLE) * mSize);
             mPath.lineTo(0, 0);
         }
 

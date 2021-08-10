@@ -28,6 +28,8 @@ import android.os.Bundle;
  * use either OpenGL ES 1.0 or OpenGL ES 2.0, as appropriate.
  */
 public class GLES20Activity extends Activity {
+    private GLSurfaceView mGLSurfaceView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +49,7 @@ public class GLES20Activity extends Activity {
 
     private boolean detectOpenGLES20() {
         ActivityManager am =
-            (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+                (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         ConfigurationInfo info = am.getDeviceConfigurationInfo();
         return (info.reqGlEsVersion >= 0x20000);
     }
@@ -67,6 +69,4 @@ public class GLES20Activity extends Activity {
         super.onPause();
         mGLSurfaceView.onPause();
     }
-
-    private GLSurfaceView mGLSurfaceView;
 }

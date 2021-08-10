@@ -30,8 +30,6 @@ package com.example.android.apis.os;
 //import com.google.android.mms.pdu.SendConf;
 //import com.google.android.mms.pdu.SendReq;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -50,18 +48,33 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.android.apis.R;
+
 import java.io.File;
 import java.util.Random;
 
 public class MmsMessagingDemo extends Activity {
-    private static final String TAG = "MmsMessagingDemo";
-
     public static final String EXTRA_NOTIFICATION_URL = "notification_url";
-
+    public static final long DEFAULT_EXPIRY_TIME = 7 * 24 * 60 * 60;
+    private static final String TAG = "MmsMessagingDemo";
     private static final String ACTION_MMS_SENT = "com.example.android.apis.os.MMS_SENT_ACTION";
     private static final String ACTION_MMS_RECEIVED =
             "com.example.android.apis.os.MMS_RECEIVED_ACTION";
-
+    private static final String TEXT_PART_FILENAME = "text_0.txt";
+    private static final String sSmilText =
+            "<smil>" +
+                    "<head>" +
+                    "<layout>" +
+                    "<root-layout/>" +
+                    "<region height=\"100%%\" id=\"Text\" left=\"0%%\" top=\"0%%\" width=\"100%%\"/>" +
+                    "</layout>" +
+                    "</head>" +
+                    "<body>" +
+                    "<par dur=\"8000ms\">" +
+                    "<text src=\"%s\" region=\"Text\"/>" +
+                    "</par>" +
+                    "</body>" +
+                    "</smil>";
     private EditText mRecipientsInput;
     private EditText mSubjectInput;
     private EditText mTextInput;
@@ -70,7 +83,6 @@ public class MmsMessagingDemo extends Activity {
     private File mSendFile;
     private File mDownloadFile;
     private Random mRandom = new Random();
-
     private BroadcastReceiver mSentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -78,7 +90,6 @@ public class MmsMessagingDemo extends Activity {
         }
     };
     private IntentFilter mSentFilter = new IntentFilter(ACTION_MMS_SENT);
-
     private BroadcastReceiver mReceivedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -86,6 +97,12 @@ public class MmsMessagingDemo extends Activity {
         }
     };
     private IntentFilter mReceivedFilter = new IntentFilter(ACTION_MMS_RECEIVED);
+
+    private static String getSimNumber(Context context) {
+        final TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(
+                Context.TELEPHONY_SERVICE);
+        return telephonyManager.getLine1Number();
+    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -219,6 +236,7 @@ public class MmsMessagingDemo extends Activity {
 //            }
 //        });
     }
+//    public static final int DEFAULT_PRIORITY = PduHeaders.PRIORITY_NORMAL;
 
     private void handleSentResult(int code, Intent intent) {
         mSendFile.delete();
@@ -260,63 +278,6 @@ public class MmsMessagingDemo extends Activity {
             unregisterReceiver(mReceivedReceiver);
         }
     }
-
-    private void handleReceivedResult(Context context, int code, Intent intent) {
-        int status = R.string.mms_status_failed;
-//        if (code == Activity.RESULT_OK) {
-//            try {
-//                final int nBytes = (int) mDownloadFile.length();
-//                FileInputStream reader = new FileInputStream(mDownloadFile);
-//                final byte[] response = new byte[nBytes];
-//                final int read = reader.read(response, 0, nBytes);
-//                if (read == nBytes) {
-//                    final GenericPdu pdu = new PduParser(
-//                            response, PduParserUtil.shouldParseContentDisposition()).parse();
-//                    if (pdu instanceof RetrieveConf) {
-//                        final RetrieveConf retrieveConf = (RetrieveConf) pdu;
-//                        mRecipientsInput.setText(getRecipients(context, retrieveConf));
-//                        mSubjectInput.setText(getSubject(retrieveConf));
-//                        mTextInput.setText(getMessageText(retrieveConf));
-//                        status = R.string.mms_status_downloaded;
-//                    } else {
-//                        Log.e(TAG, "MMS received, invalid response");
-//                    }
-//                } else {
-//                    Log.e(TAG, "MMS received, empty response");
-//                }
-//            } catch (FileNotFoundException e) {
-//                Log.e(TAG, "MMS received, file not found exception", e);
-//            } catch (IOException e) {
-//                Log.e(TAG, "MMS received, io exception", e);
-//            } finally {
-//                mDownloadFile.delete();
-//            }
-//        } else {
-//            Log.e(TAG, "MMS not received, error=" + code);
-//        }
-//        mDownloadFile = null;
-//        mSendStatusView.setText(status);
-//        mSendButton.setEnabled(true);
-    }
-
-    public static final long DEFAULT_EXPIRY_TIME = 7 * 24 * 60 * 60;
-//    public static final int DEFAULT_PRIORITY = PduHeaders.PRIORITY_NORMAL;
-
-    private static final String TEXT_PART_FILENAME = "text_0.txt";
-    private static final String sSmilText =
-            "<smil>" +
-                "<head>" +
-                    "<layout>" +
-                        "<root-layout/>" +
-                        "<region height=\"100%%\" id=\"Text\" left=\"0%%\" top=\"0%%\" width=\"100%%\"/>" +
-                    "</layout>" +
-                "</head>" +
-                "<body>" +
-                    "<par dur=\"8000ms\">" +
-                        "<text src=\"%s\" region=\"Text\"/>" +
-                    "</par>" +
-                "</body>" +
-            "</smil>";
 
 //    private static byte[] buildPdu(Context context, String recipients, String subject,
 //            String text) {
@@ -438,9 +399,41 @@ public class MmsMessagingDemo extends Activity {
 //        return sb.toString();
 //    }
 
-    private static String getSimNumber(Context context) {
-        final TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(
-                Context.TELEPHONY_SERVICE);
-        return telephonyManager.getLine1Number();
+    private void handleReceivedResult(Context context, int code, Intent intent) {
+        int status = R.string.mms_status_failed;
+//        if (code == Activity.RESULT_OK) {
+//            try {
+//                final int nBytes = (int) mDownloadFile.length();
+//                FileInputStream reader = new FileInputStream(mDownloadFile);
+//                final byte[] response = new byte[nBytes];
+//                final int read = reader.read(response, 0, nBytes);
+//                if (read == nBytes) {
+//                    final GenericPdu pdu = new PduParser(
+//                            response, PduParserUtil.shouldParseContentDisposition()).parse();
+//                    if (pdu instanceof RetrieveConf) {
+//                        final RetrieveConf retrieveConf = (RetrieveConf) pdu;
+//                        mRecipientsInput.setText(getRecipients(context, retrieveConf));
+//                        mSubjectInput.setText(getSubject(retrieveConf));
+//                        mTextInput.setText(getMessageText(retrieveConf));
+//                        status = R.string.mms_status_downloaded;
+//                    } else {
+//                        Log.e(TAG, "MMS received, invalid response");
+//                    }
+//                } else {
+//                    Log.e(TAG, "MMS received, empty response");
+//                }
+//            } catch (FileNotFoundException e) {
+//                Log.e(TAG, "MMS received, file not found exception", e);
+//            } catch (IOException e) {
+//                Log.e(TAG, "MMS received, io exception", e);
+//            } finally {
+//                mDownloadFile.delete();
+//            }
+//        } else {
+//            Log.e(TAG, "MMS not received, error=" + code);
+//        }
+//        mDownloadFile = null;
+//        mSendStatusView.setText(status);
+//        mSendButton.setEnabled(true);
     }
 }

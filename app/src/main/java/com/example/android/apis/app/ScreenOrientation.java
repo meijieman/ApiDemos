@@ -16,48 +16,46 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
-import android.app.admin.DevicePolicyManager;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.AdapterView.OnItemSelectedListener;
+
+import com.example.android.apis.R;
 
 public class ScreenOrientation extends Activity {
-    Spinner mOrientation;
-
     // Orientation spinner choices
     // This list must match the list found in samples/ApiDemos/res/values/arrays.xml
-    final static int mOrientationValues[] = new int[] {
-        ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED,
-        ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE,
-        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
-        ActivityInfo.SCREEN_ORIENTATION_USER,
-        ActivityInfo.SCREEN_ORIENTATION_BEHIND,
-        ActivityInfo.SCREEN_ORIENTATION_SENSOR,
-        ActivityInfo.SCREEN_ORIENTATION_NOSENSOR,
-        ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE,
-        ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT,
-        ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE,
-        ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT,
-        ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR,
-        ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE,
-        ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT,
-        ActivityInfo.SCREEN_ORIENTATION_FULL_USER,
-        ActivityInfo.SCREEN_ORIENTATION_LOCKED,
+    final static int mOrientationValues[] = new int[]{
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED,
+            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE,
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
+            ActivityInfo.SCREEN_ORIENTATION_USER,
+            ActivityInfo.SCREEN_ORIENTATION_BEHIND,
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR,
+            ActivityInfo.SCREEN_ORIENTATION_NOSENSOR,
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE,
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT,
+            ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE,
+            ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT,
+            ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR,
+            ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE,
+            ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT,
+            ActivityInfo.SCREEN_ORIENTATION_FULL_USER,
+            ActivityInfo.SCREEN_ORIENTATION_LOCKED,
     };
-    
+    Spinner mOrientation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_orientation);
-        
-        mOrientation = (Spinner)findViewById(R.id.orientation);
+
+        mOrientation = (Spinner) findViewById(R.id.orientation);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this, R.array.screen_orientations, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

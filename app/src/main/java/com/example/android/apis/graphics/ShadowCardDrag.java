@@ -37,6 +37,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+
 import com.example.android.apis.R;
 
 import java.util.ArrayList;
@@ -45,104 +46,11 @@ public class ShadowCardDrag extends Activity {
     private static final float MAX_Z_DP = 10;
     private static final float MOMENTUM_SCALE = 10;
     private static final int MAX_ANGLE = 10;
-
-    private class CardDragState {
-        long lastEventTime;
-        float lastX;
-        float lastY;
-
-        float momentumX;
-        float momentumY;
-
-        public void onDown(long eventTime, float x, float y) {
-            lastEventTime = eventTime;
-            lastX = x;
-            lastY = y;
-
-            momentumX = 0;
-            momentumY = 0;
-        }
-
-        public void onMove(long eventTime, float x, float y) {
-            final long deltaT = eventTime - lastEventTime;
-
-            if (deltaT != 0) {
-                float newMomentumX = (x - lastX) / (mDensity * deltaT);
-                float newMomentumY = (y - lastY) / (mDensity * deltaT);
-
-                momentumX = 0.9f * momentumX + 0.1f * (newMomentumX * MOMENTUM_SCALE);
-                momentumY = 0.9f * momentumY + 0.1f * (newMomentumY * MOMENTUM_SCALE);
-
-                momentumX = Math.max(Math.min((momentumX), MAX_ANGLE), -MAX_ANGLE);
-                momentumY = Math.max(Math.min((momentumY), MAX_ANGLE), -MAX_ANGLE);
-
-                //noinspection SuspiciousNameCombination
-                mCard.setRotationX(-momentumY);
-                //noinspection SuspiciousNameCombination
-                mCard.setRotationY(momentumX);
-
-                if (mShadingEnabled) {
-                    float alphaDarkening = (momentumX * momentumX + momentumY * momentumY) / (90 * 90);
-                    alphaDarkening /= 2;
-
-                    int alphaByte = 0xff - ((int)(alphaDarkening * 255) & 0xff);
-                    int color = Color.rgb(alphaByte, alphaByte, alphaByte);
-                    mCardBackground.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-                }
-            }
-
-            lastX = x;
-            lastY = y;
-            lastEventTime = eventTime;
-        }
-
-        public void onUp() {
-            ObjectAnimator flattenX = ObjectAnimator.ofFloat(mCard, "rotationX", 0);
-            flattenX.setDuration(100);
-            flattenX.setInterpolator(new AccelerateInterpolator());
-            flattenX.start();
-
-            ObjectAnimator flattenY = ObjectAnimator.ofFloat(mCard, "rotationY", 0);
-            flattenY.setDuration(100);
-            flattenY.setInterpolator(new AccelerateInterpolator());
-            flattenY.start();
-            mCardBackground.setColorFilter(null);
-        }
-    }
-
-    /**
-     * Simple shape example that generates a shadow casting outline.
-     */
-    private static class TriangleShape extends Shape {
-        private final Path mPath = new Path();
-
-        @Override
-        protected void onResize(float width, float height) {
-            mPath.reset();
-            mPath.moveTo(0, 0);
-            mPath.lineTo(width, 0);
-            mPath.lineTo(width / 2, height);
-            mPath.lineTo(0, 0);
-            mPath.close();
-        }
-
-        @Override
-        public void draw(Canvas canvas, Paint paint) {
-            canvas.drawPath(mPath, paint);
-        }
-
-        @Override
-        public void getOutline(Outline outline) {
-            outline.setConvexPath(mPath);
-        }
-    }
-
     private final ShapeDrawable mCardBackground = new ShapeDrawable();
     private final ArrayList<Shape> mShapes = new ArrayList<>();
+    private final CardDragState mDragState = new CardDragState();
     private float mDensity;
     private View mCard;
-
-    private final CardDragState mDragState = new CardDragState();
     private boolean mTiltEnabled;
     private boolean mShadingEnabled;
 
@@ -155,7 +63,7 @@ public class ShadowCardDrag extends Activity {
         mShapes.add(new RectShape());
         mShapes.add(new OvalShape());
         float r = 10 * mDensity;
-        float radii[] = new float[] {r, r, r, r, r, r, r, r};
+        float radii[] = new float[]{r, r, r, r, r, r, r, r};
         mShapes.add(new RoundRectShape(radii, null, null));
         mShapes.add(new TriangleShape());
 
@@ -190,6 +98,7 @@ public class ShadowCardDrag extends Activity {
         final Button shapeButton = (Button) findViewById(R.id.shape_select);
         shapeButton.setOnClickListener(new View.OnClickListener() {
             int index = 0;
+
             @Override
             public void onClick(View v) {
                 index = (index + 1) % mShapes.size();
@@ -244,5 +153,96 @@ public class ShadowCardDrag extends Activity {
                 return true;
             }
         });
+    }
+
+    /**
+     * Simple shape example that generates a shadow casting outline.
+     */
+    private static class TriangleShape extends Shape {
+        private final Path mPath = new Path();
+
+        @Override
+        protected void onResize(float width, float height) {
+            mPath.reset();
+            mPath.moveTo(0, 0);
+            mPath.lineTo(width, 0);
+            mPath.lineTo(width / 2, height);
+            mPath.lineTo(0, 0);
+            mPath.close();
+        }
+
+        @Override
+        public void draw(Canvas canvas, Paint paint) {
+            canvas.drawPath(mPath, paint);
+        }
+
+        @Override
+        public void getOutline(Outline outline) {
+            outline.setConvexPath(mPath);
+        }
+    }
+
+    private class CardDragState {
+        long lastEventTime;
+        float lastX;
+        float lastY;
+
+        float momentumX;
+        float momentumY;
+
+        public void onDown(long eventTime, float x, float y) {
+            lastEventTime = eventTime;
+            lastX = x;
+            lastY = y;
+
+            momentumX = 0;
+            momentumY = 0;
+        }
+
+        public void onMove(long eventTime, float x, float y) {
+            final long deltaT = eventTime - lastEventTime;
+
+            if (deltaT != 0) {
+                float newMomentumX = (x - lastX) / (mDensity * deltaT);
+                float newMomentumY = (y - lastY) / (mDensity * deltaT);
+
+                momentumX = 0.9f * momentumX + 0.1f * (newMomentumX * MOMENTUM_SCALE);
+                momentumY = 0.9f * momentumY + 0.1f * (newMomentumY * MOMENTUM_SCALE);
+
+                momentumX = Math.max(Math.min((momentumX), MAX_ANGLE), -MAX_ANGLE);
+                momentumY = Math.max(Math.min((momentumY), MAX_ANGLE), -MAX_ANGLE);
+
+                //noinspection SuspiciousNameCombination
+                mCard.setRotationX(-momentumY);
+                //noinspection SuspiciousNameCombination
+                mCard.setRotationY(momentumX);
+
+                if (mShadingEnabled) {
+                    float alphaDarkening = (momentumX * momentumX + momentumY * momentumY) / (90 * 90);
+                    alphaDarkening /= 2;
+
+                    int alphaByte = 0xff - ((int) (alphaDarkening * 255) & 0xff);
+                    int color = Color.rgb(alphaByte, alphaByte, alphaByte);
+                    mCardBackground.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+                }
+            }
+
+            lastX = x;
+            lastY = y;
+            lastEventTime = eventTime;
+        }
+
+        public void onUp() {
+            ObjectAnimator flattenX = ObjectAnimator.ofFloat(mCard, "rotationX", 0);
+            flattenX.setDuration(100);
+            flattenX.setInterpolator(new AccelerateInterpolator());
+            flattenX.start();
+
+            ObjectAnimator flattenY = ObjectAnimator.ofFloat(mCard, "rotationY", 0);
+            flattenY.setDuration(100);
+            flattenY.setInterpolator(new AccelerateInterpolator());
+            flattenY.start();
+            mCardBackground.setColorFilter(null);
+        }
     }
 }

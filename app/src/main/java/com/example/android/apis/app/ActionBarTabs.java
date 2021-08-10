@@ -15,8 +15,6 @@
  */
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
@@ -28,6 +26,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.android.apis.R;
 
 /**
  * This demonstrates the use of action bar tabs and how they interact
@@ -80,7 +80,7 @@ public class ActionBarTabs extends Activity {
      * to it, it will be committed at the end of the full tab switch operation.
      * This lets tab switches be atomic without the app needing to track
      * the interactions between different tabs.
-     *
+     * <p>
      * NOTE: This is a very simple implementation that does not retain
      * fragment state of the non-visible tabs across activity instances.
      * Look at the FragmentTabs example for how to do a more complete
@@ -120,7 +120,7 @@ public class ActionBarTabs extends Activity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View fragView = inflater.inflate(R.layout.action_bar_tab_content, container, false);
 
             TextView text = (TextView) fragView.findViewById(R.id.text);

@@ -16,14 +16,13 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import com.example.android.apis.R;
 
 /**
  * This is an activity that provides an interstitial UI for the notification
@@ -39,13 +38,14 @@ public class IncomingMessageInterstitial extends Activity {
 
         Button button = (Button) findViewById(R.id.notify_app);
         button.setOnClickListener(new Button.OnClickListener() {
-                public void onClick(View v) {
-                    switchToApp();
-                }
-            });
+            public void onClick(View v) {
+                switchToApp();
+            }
+        });
     }
 
 //BEGIN_INCLUDE(app_launch)
+
     /**
      * Perform a switch to the app.  A new activity stack is started, replacing
      * whatever is currently running, and this activity is finished.

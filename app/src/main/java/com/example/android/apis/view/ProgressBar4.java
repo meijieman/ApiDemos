@@ -16,13 +16,13 @@
 
 package com.example.android.apis.view;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Window;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+
+import com.example.android.apis.R;
 
 
 /**
@@ -39,7 +39,7 @@ public class ProgressBar4 extends Activity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.progressbar_4);
         setProgressBarIndeterminateVisibility(mToggleIndeterminate);
-        
+
         Button button = (Button) findViewById(R.id.toggle);
         button.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {

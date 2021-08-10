@@ -22,10 +22,12 @@ import android.widget.ArrayAdapter;
 
 
 /**
- * A list view example where the 
+ * A list view example where the
  * data for the list comes from an array of strings.
  */
 public class List1 extends ListActivity {
+
+    private String[] mStrings = Cheeses.sCheeseStrings;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,4 @@ public class List1 extends ListActivity {
                 android.R.layout.simple_list_item_1, mStrings));
         getListView().setTextFilterEnabled(true);
     }
-
-    private String[] mStrings = Cheeses.sCheeseStrings;
 }

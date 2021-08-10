@@ -15,8 +15,6 @@
  */
 package com.example.android.apis.animation;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
@@ -25,6 +23,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+
+import com.example.android.apis.R;
 
 /**
  *
@@ -38,6 +38,13 @@ public class ActivityTransitionDetails extends Activity {
     private int mImageResourceId = R.drawable.ducky;
 
     private String mName = "ducky";
+
+    private static int randomColor() {
+        int red = (int) (Math.random() * 128);
+        int green = (int) (Math.random() * 128);
+        int blue = (int) (Math.random() * 128);
+        return 0xFF000000 | (red << 16) | (green << 8) | blue;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +71,5 @@ public class ActivityTransitionDetails extends Activity {
         ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(this,
                 v, "hero");
         startActivity(intent, activityOptions.toBundle());
-    }
-
-    private static int randomColor() {
-        int red = (int)(Math.random() * 128);
-        int green = (int)(Math.random() * 128);
-        int blue = (int)(Math.random() * 128);
-        return 0xFF000000 | (red << 16) | (green << 8) | blue;
     }
 }

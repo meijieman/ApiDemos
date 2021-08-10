@@ -29,6 +29,7 @@ import android.widget.SearchView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.android.apis.R;
 
 public class WindowFocusObserver extends Activity implements SearchView.OnQueryTextListener {
@@ -52,7 +53,7 @@ public class WindowFocusObserver extends Activity implements SearchView.OnQueryT
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.window_focus_observer);
-        mState = (TextView)findViewById(R.id.focus_state);
+        mState = (TextView) findViewById(R.id.focus_state);
     }
 
     @Override

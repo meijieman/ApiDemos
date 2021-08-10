@@ -67,7 +67,7 @@ public class ShadowCardStack extends Activity {
             TextView card = (TextView) cardParent.getChildAt(i);
             card.setText("Card number " + i);
 
-            float targetY = (i - (max-1) / 2.0f) * Y;
+            float targetY = (i - (max - 1) / 2.0f) * Y;
             Animator expand = ObjectAnimator.ofFloat(card, "translationY", targetY);
             expandAnimators.add(expand);
 
@@ -118,12 +118,14 @@ public class ShadowCardStack extends Activity {
 
     public static class RepeatListener implements Animator.AnimatorListener {
         final Animator mRepeatAnimator;
+
         public RepeatListener(Animator repeatAnimator) {
             mRepeatAnimator = repeatAnimator;
         }
 
         @Override
-        public void onAnimationStart(Animator animation) {}
+        public void onAnimationStart(Animator animation) {
+        }
 
         @Override
         public void onAnimationEnd(Animator animation) {
@@ -133,9 +135,11 @@ public class ShadowCardStack extends Activity {
         }
 
         @Override
-        public void onAnimationCancel(Animator animation) {}
+        public void onAnimationCancel(Animator animation) {
+        }
 
         @Override
-        public void onAnimationRepeat(Animator animation) {}
+        public void onAnimationRepeat(Animator animation) {
+        }
     }
 }

@@ -19,12 +19,11 @@ package com.example.android.apis.view;
 import android.app.Activity;
 import android.os.Bundle;
 
-
 import com.example.android.apis.R;
 
 
 public class ImageButton1 extends Activity {
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -20,10 +20,10 @@ import java.nio.IntBuffer;
 
 public class GLVertex {
 
+    final short index; // index in vertex table
     public float x;
     public float y;
     public float z;
-    final short index; // index in vertex table
     GLColor color;
 
     GLVertex() {
@@ -37,20 +37,20 @@ public class GLVertex {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.index = (short)index;
+        this.index = (short) index;
+    }
+
+    static public int toFixed(float x) {
+        return (int) (x * 65536.0f);
     }
 
     @Override
     public boolean equals(Object other) {
         if (other instanceof GLVertex) {
-            GLVertex v = (GLVertex)other;
+            GLVertex v = (GLVertex) other;
             return (x == v.x && y == v.y && z == v.z);
         }
         return false;
-    }
-
-    static public int toFixed(float x) {
-        return (int)(x * 65536.0f);
     }
 
     public void put(IntBuffer vertexBuffer, IntBuffer colorBuffer) {

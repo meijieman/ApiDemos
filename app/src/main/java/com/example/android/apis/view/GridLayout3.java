@@ -21,12 +21,23 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.GridLayout;
+import android.widget.TextView;
 
-import android.widget.*;
-
-import static android.text.InputType.*;
-import static android.widget.GridLayout.*;
+import static android.text.InputType.TYPE_CLASS_TEXT;
+import static android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
+import static android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD;
+import static android.widget.GridLayout.ALIGN_BOUNDS;
+import static android.widget.GridLayout.BASELINE;
+import static android.widget.GridLayout.CENTER;
+import static android.widget.GridLayout.FILL;
+import static android.widget.GridLayout.LEFT;
 import static android.widget.GridLayout.LayoutParams;
+import static android.widget.GridLayout.RIGHT;
+import static android.widget.GridLayout.Spec;
+import static android.widget.GridLayout.spec;
 
 /**
  * A form, showing use of the GridLayout API. Here we demonstrate use of the row/column order
@@ -47,19 +58,19 @@ public class GridLayout3 extends Activity {
             p.setRowOrderPreserved(false);
         }
 
-        Spec titleRow              = spec(0);
-        Spec introRow              = spec(1);
-        Spec emailRow              = spec(2, BASELINE);
-        Spec passwordRow           = spec(3, BASELINE);
-        Spec button1Row            = spec(5);
-        Spec button2Row            = spec(6);
+        Spec titleRow = spec(0);
+        Spec introRow = spec(1);
+        Spec emailRow = spec(2, BASELINE);
+        Spec passwordRow = spec(3, BASELINE);
+        Spec button1Row = spec(5);
+        Spec button2Row = spec(6);
 
-        Spec centerInAllColumns    = spec(0, 4, CENTER);
+        Spec centerInAllColumns = spec(0, 4, CENTER);
         Spec leftAlignInAllColumns = spec(0, 4, LEFT);
-        Spec labelColumn           = spec(0, RIGHT);
-        Spec fieldColumn           = spec(1, LEFT);
-        Spec defineLastColumn      = spec(3);
-        Spec fillLastColumn        = spec(3, FILL);
+        Spec labelColumn = spec(0, RIGHT);
+        Spec fieldColumn = spec(1, LEFT);
+        Spec defineLastColumn = spec(3);
+        Spec fillLastColumn = spec(3, FILL);
 
         {
             TextView c = new TextView(context);

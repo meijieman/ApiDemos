@@ -16,15 +16,6 @@
 
 package com.example.android.apis.graphics;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,7 +28,54 @@ import android.util.Log;
 
 import com.example.android.apis.R;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
 class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
+
+    private static final int FLOAT_SIZE_BYTES = 4;
+    private static final int TRIANGLE_VERTICES_DATA_STRIDE_BYTES = 5 * FLOAT_SIZE_BYTES;
+    private static final int TRIANGLE_VERTICES_DATA_POS_OFFSET = 0;
+    private static final int TRIANGLE_VERTICES_DATA_UV_OFFSET = 3;
+    private static String TAG = "GLES20TriangleRenderer";
+    private final float[] mTriangleVerticesData = {
+            // X, Y, Z, U, V
+            -1.0f, -0.5f, 0, -0.5f, 0.0f,
+            1.0f, -0.5f, 0, 1.5f, -0.0f,
+            0.0f, 1.11803399f, 0, 0.5f, 1.61803399f};
+    private final String mVertexShader =
+            "uniform mat4 uMVPMatrix;\n" +
+                    "attribute vec4 aPosition;\n" +
+                    "attribute vec2 aTextureCoord;\n" +
+                    "varying vec2 vTextureCoord;\n" +
+                    "void main() {\n" +
+                    "  gl_Position = uMVPMatrix * aPosition;\n" +
+                    "  vTextureCoord = aTextureCoord;\n" +
+                    "}\n";
+    private final String mFragmentShader =
+            "precision mediump float;\n" +
+                    "varying vec2 vTextureCoord;\n" +
+                    "uniform sampler2D sTexture;\n" +
+                    "void main() {\n" +
+                    "  gl_FragColor = texture2D(sTexture, vTextureCoord);\n" +
+                    "}\n";
+    private FloatBuffer mTriangleVertices;
+    private float[] mMVPMatrix = new float[16];
+    private float[] mProjMatrix = new float[16];
+    private float[] mMMatrix = new float[16];
+    private float[] mVMatrix = new float[16];
+    private int mProgram;
+    private int mTextureID;
+    private int muMVPMatrixHandle;
+    private int maPositionHandle;
+    private int maTextureHandle;
+    private Context mContext;
 
     public GLES20TriangleRenderer(Context context) {
         mContext = context;
@@ -50,7 +88,7 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
         // Ignore the passed-in GL10 interface, and use the GLES20
         // class's static methods instead.
         GLES20.glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-        GLES20.glClear( GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
+        GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         GLES20.glUseProgram(mProgram);
         checkGlError("glUseProgram");
 
@@ -136,14 +174,14 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
                 GLES20.GL_REPEAT);
 
         InputStream is = mContext.getResources()
-            .openRawResource(R.raw.robot);
+                .openRawResource(R.raw.robot);
         Bitmap bitmap;
         try {
             bitmap = BitmapFactory.decodeStream(is);
         } finally {
             try {
                 is.close();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 // Ignore.
             }
         }
@@ -208,48 +246,4 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
             throw new RuntimeException(op + ": glError " + error);
         }
     }
-
-    private static final int FLOAT_SIZE_BYTES = 4;
-    private static final int TRIANGLE_VERTICES_DATA_STRIDE_BYTES = 5 * FLOAT_SIZE_BYTES;
-    private static final int TRIANGLE_VERTICES_DATA_POS_OFFSET = 0;
-    private static final int TRIANGLE_VERTICES_DATA_UV_OFFSET = 3;
-    private final float[] mTriangleVerticesData = {
-            // X, Y, Z, U, V
-            -1.0f, -0.5f, 0, -0.5f, 0.0f,
-            1.0f, -0.5f, 0, 1.5f, -0.0f,
-            0.0f,  1.11803399f, 0, 0.5f,  1.61803399f };
-
-    private FloatBuffer mTriangleVertices;
-
-    private final String mVertexShader =
-        "uniform mat4 uMVPMatrix;\n" +
-        "attribute vec4 aPosition;\n" +
-        "attribute vec2 aTextureCoord;\n" +
-        "varying vec2 vTextureCoord;\n" +
-        "void main() {\n" +
-        "  gl_Position = uMVPMatrix * aPosition;\n" +
-        "  vTextureCoord = aTextureCoord;\n" +
-        "}\n";
-
-    private final String mFragmentShader =
-        "precision mediump float;\n" +
-        "varying vec2 vTextureCoord;\n" +
-        "uniform sampler2D sTexture;\n" +
-        "void main() {\n" +
-        "  gl_FragColor = texture2D(sTexture, vTextureCoord);\n" +
-        "}\n";
-
-    private float[] mMVPMatrix = new float[16];
-    private float[] mProjMatrix = new float[16];
-    private float[] mMMatrix = new float[16];
-    private float[] mVMatrix = new float[16];
-
-    private int mProgram;
-    private int mTextureID;
-    private int muMVPMatrixHandle;
-    private int maPositionHandle;
-    private int maTextureHandle;
-
-    private Context mContext;
-    private static String TAG = "GLES20TriangleRenderer";
 }

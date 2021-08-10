@@ -15,8 +15,6 @@
  */
 package com.example.android.apis.animation;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.SharedElementCallback;
@@ -26,6 +24,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.example.android.apis.R;
+
 import java.util.List;
 import java.util.Map;
 
@@ -33,12 +33,6 @@ import java.util.Map;
  *
  */
 public class ActivityTransition extends Activity {
-
-    private static final String TAG = "ActivityTransition";
-
-    private static final String KEY_ID = "ViewTransitionValues:id";
-
-    private ImageView mHero;
 
     public static final int[] DRAWABLES = {
             R.drawable.ball,
@@ -50,7 +44,6 @@ public class ActivityTransition extends Activity {
             R.drawable.scissors,
             R.drawable.woot,
     };
-
     public static final int[] IDS = {
             R.id.ball,
             R.id.block,
@@ -61,7 +54,6 @@ public class ActivityTransition extends Activity {
             R.id.scissors,
             R.id.woot,
     };
-
     public static final String[] NAMES = {
             "ball",
             "block",
@@ -72,6 +64,9 @@ public class ActivityTransition extends Activity {
             "scissors",
             "woot",
     };
+    private static final String TAG = "ActivityTransition";
+    private static final String KEY_ID = "ViewTransitionValues:id";
+    private ImageView mHero;
 
     public static int getIdForKey(String id) {
         return IDS[getIndexForKey(id)];
@@ -91,6 +86,13 @@ public class ActivityTransition extends Activity {
         return 2;
     }
 
+    private static int randomColor() {
+        int red = (int) (Math.random() * 128);
+        int green = (int) (Math.random() * 128);
+        int blue = (int) (Math.random() * 128);
+        return 0xFF000000 | (red << 16) | (green << 8) | blue;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,7 +109,7 @@ public class ActivityTransition extends Activity {
             setEnterSharedElementCallback(new SharedElementCallback() {
                 @Override
                 public void onMapSharedElements(List<String> names,
-                        Map<String, View> sharedElements) {
+                                                Map<String, View> sharedElements) {
                     sharedElements.put("hero", mHero);
                 }
             });
@@ -121,12 +123,5 @@ public class ActivityTransition extends Activity {
         ActivityOptions activityOptions
                 = ActivityOptions.makeSceneTransitionAnimation(this, mHero, "hero");
         startActivity(intent, activityOptions.toBundle());
-    }
-
-    private static int randomColor() {
-        int red = (int)(Math.random() * 128);
-        int green = (int)(Math.random() * 128);
-        int blue = (int)(Math.random() * 128);
-        return 0xFF000000 | (red << 16) | (green << 8) | blue;
     }
 }

@@ -17,9 +17,9 @@
 package com.example.android.apis.view;
 
 import android.app.ActionBar;
+import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.app.ActionBar.Tab;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -37,10 +37,10 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.SearchView.OnQueryTextListener;
 
 import com.example.android.apis.R;
 
@@ -51,65 +51,18 @@ import com.example.android.apis.R;
  */
 public class SystemUIModes extends Activity
         implements OnQueryTextListener, ActionBar.TabListener {
-    public static class IV extends ImageView implements View.OnSystemUiVisibilityChangeListener {
-        private SystemUIModes mActivity;
-        private ActionMode mActionMode;
-        public IV(Context context) {
-            super(context);
-        }
-        public IV(Context context, AttributeSet attrs) {
-            super(context, attrs);
-        }
-        public void setActivity(SystemUIModes act) {
-            setOnSystemUiVisibilityChangeListener(this);
-            mActivity = act;
-        }
-        @Override
-        public void onSizeChanged(int w, int h, int oldw, int oldh) {
-            mActivity.refreshSizes();
-        }
-        @Override
-        public void onSystemUiVisibilityChange(int visibility) {
-            mActivity.updateCheckControls();
-            mActivity.refreshSizes();
-        }
+    static int TOAST_LENGTH = 500;
+    IV mImage;
+    CheckBox[] mCheckControls = new CheckBox[8];
+    int[] mCheckFlags = new int[]{View.SYSTEM_UI_FLAG_LOW_PROFILE,
+            View.SYSTEM_UI_FLAG_FULLSCREEN, View.SYSTEM_UI_FLAG_HIDE_NAVIGATION,
+            View.SYSTEM_UI_FLAG_IMMERSIVE, View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY,
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE, View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN,
+            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+    };
+    TextView mMetricsText;
 
-        private class MyActionModeCallback implements ActionMode.Callback {
-            @Override public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                mode.setTitle("My Action Mode!");
-                mode.setSubtitle(null);
-                mode.setTitleOptionalHint(false);
-                menu.add("Sort By Size").setIcon(android.R.drawable.ic_menu_sort_by_size);
-                menu.add("Sort By Alpha").setIcon(android.R.drawable.ic_menu_sort_alphabetically);
-                return true;
-            }
-
-            @Override public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return true;
-            }
-
-            @Override public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                return true;
-            }
-
-            @Override public void onDestroyActionMode(ActionMode mode) {
-                mActionMode = null;
-                mActivity.clearActionMode();
-            }
-        }
-
-        public void startActionMode() {
-            if (mActionMode == null) {
-                ActionMode.Callback cb = new MyActionModeCallback();
-                mActionMode = startActionMode(cb);
-            }
-        }
-
-        public void stopActionMode() {
-            if (mActionMode != null) {
-                mActionMode.finish();
-            }
-        }
+    public SystemUIModes() {
     }
 
     private void setFullscreen(boolean on) {
@@ -117,7 +70,7 @@ public class SystemUIModes extends Activity
         WindowManager.LayoutParams winParams = win.getAttributes();
         final int bits = WindowManager.LayoutParams.FLAG_FULLSCREEN;
         if (on) {
-            winParams.flags |=  bits;
+            winParams.flags |= bits;
         } else {
             winParams.flags &= ~bits;
         }
@@ -129,7 +82,7 @@ public class SystemUIModes extends Activity
         WindowManager.LayoutParams winParams = win.getAttributes();
         final int bits = WindowManager.LayoutParams.FLAG_LAYOUT_IN_OVERSCAN;
         if (on) {
-            winParams.flags |=  bits;
+            winParams.flags |= bits;
         } else {
             winParams.flags &= ~bits;
         }
@@ -141,7 +94,7 @@ public class SystemUIModes extends Activity
         WindowManager.LayoutParams winParams = win.getAttributes();
         final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
         if (on) {
-            winParams.flags |=  bits;
+            winParams.flags |= bits;
         } else {
             winParams.flags &= ~bits;
         }
@@ -153,7 +106,7 @@ public class SystemUIModes extends Activity
         WindowManager.LayoutParams winParams = win.getAttributes();
         final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
         if (on) {
-            winParams.flags |=  bits;
+            winParams.flags |= bits;
         } else {
             winParams.flags &= ~bits;
         }
@@ -164,27 +117,15 @@ public class SystemUIModes extends Activity
         DisplayMetrics dm = getResources().getDisplayMetrics();
         return String.format("DisplayMetrics = (%d x %d)", dm.widthPixels, dm.heightPixels);
     }
+
     private String getViewSize() {
         return String.format("View = (%d,%d - %d,%d)",
                 mImage.getLeft(), mImage.getTop(),
                 mImage.getRight(), mImage.getBottom());
     }
+
     void refreshSizes() {
         mMetricsText.setText(getDisplaySize() + " " + getViewSize());
-    }
-
-    static int TOAST_LENGTH = 500;
-    IV mImage;
-    CheckBox[] mCheckControls = new CheckBox[8];
-    int[] mCheckFlags = new int[] { View.SYSTEM_UI_FLAG_LOW_PROFILE,
-            View.SYSTEM_UI_FLAG_FULLSCREEN, View.SYSTEM_UI_FLAG_HIDE_NAVIGATION,
-            View.SYSTEM_UI_FLAG_IMMERSIVE, View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY,
-            View.SYSTEM_UI_FLAG_LAYOUT_STABLE, View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN,
-            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-    };
-    TextView mMetricsText;
-
-    public SystemUIModes() {
     }
 
     @Override
@@ -197,7 +138,8 @@ public class SystemUIModes extends Activity
 
         CompoundButton.OnCheckedChangeListener checkChangeListener
                 = new CompoundButton.OnCheckedChangeListener() {
-            @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 updateSystemUi();
             }
         };
@@ -209,7 +151,7 @@ public class SystemUIModes extends Activity
         mCheckControls[5] = (CheckBox) findViewById(R.id.layoutStable);
         mCheckControls[6] = (CheckBox) findViewById(R.id.layoutFullscreen);
         mCheckControls[7] = (CheckBox) findViewById(R.id.layoutHideNavigation);
-        for (int i=0; i<mCheckControls.length; i++) {
+        for (int i = 0; i < mCheckControls.length; i++) {
             mCheckControls[i].setOnCheckedChangeListener(checkChangeListener);
         }
         ((CheckBox) findViewById(R.id.windowFullscreen)).setOnCheckedChangeListener(
@@ -345,14 +287,14 @@ public class SystemUIModes extends Activity
 
     public void updateCheckControls() {
         int visibility = mImage.getSystemUiVisibility();
-        for (int i=0; i<mCheckControls.length; i++) {
-            mCheckControls[i].setChecked((visibility&mCheckFlags[i]) != 0);
+        for (int i = 0; i < mCheckControls.length; i++) {
+            mCheckControls[i].setChecked((visibility & mCheckFlags[i]) != 0);
         }
     }
 
     public void updateSystemUi() {
         int visibility = 0;
-        for (int i=0; i<mCheckControls.length; i++) {
+        for (int i = 0; i < mCheckControls.length; i++) {
             if (mCheckControls[i].isChecked()) {
                 visibility |= mCheckFlags[i];
             }
@@ -362,5 +304,75 @@ public class SystemUIModes extends Activity
 
     public void clearActionMode() {
         ((CheckBox) findViewById(R.id.windowActionMode)).setChecked(false);
+    }
+
+    public static class IV extends ImageView implements View.OnSystemUiVisibilityChangeListener {
+        private SystemUIModes mActivity;
+        private ActionMode mActionMode;
+
+        public IV(Context context) {
+            super(context);
+        }
+
+        public IV(Context context, AttributeSet attrs) {
+            super(context, attrs);
+        }
+
+        public void setActivity(SystemUIModes act) {
+            setOnSystemUiVisibilityChangeListener(this);
+            mActivity = act;
+        }
+
+        @Override
+        public void onSizeChanged(int w, int h, int oldw, int oldh) {
+            mActivity.refreshSizes();
+        }
+
+        @Override
+        public void onSystemUiVisibilityChange(int visibility) {
+            mActivity.updateCheckControls();
+            mActivity.refreshSizes();
+        }
+
+        public void startActionMode() {
+            if (mActionMode == null) {
+                ActionMode.Callback cb = new MyActionModeCallback();
+                mActionMode = startActionMode(cb);
+            }
+        }
+
+        public void stopActionMode() {
+            if (mActionMode != null) {
+                mActionMode.finish();
+            }
+        }
+
+        private class MyActionModeCallback implements ActionMode.Callback {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                mode.setTitle("My Action Mode!");
+                mode.setSubtitle(null);
+                mode.setTitleOptionalHint(false);
+                menu.add("Sort By Size").setIcon(android.R.drawable.ic_menu_sort_by_size);
+                menu.add("Sort By Alpha").setIcon(android.R.drawable.ic_menu_sort_alphabetically);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return true;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                mActionMode = null;
+                mActivity.clearActionMode();
+            }
+        }
     }
 }

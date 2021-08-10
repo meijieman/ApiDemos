@@ -16,4 +16,5 @@
 
 package com.example.android.apis.view;
 
-public class Controls9 extends Controls1 {}
+public class Controls9 extends Controls1 {
+}

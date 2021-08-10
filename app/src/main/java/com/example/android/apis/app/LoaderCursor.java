@@ -36,8 +36,8 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SearchView.OnCloseListener;
-import android.widget.SimpleCursorAdapter;
 import android.widget.SearchView.OnQueryTextListener;
+import android.widget.SimpleCursorAdapter;
 
 /**
  * Demonstration of the use of a CursorLoader to load and display contacts
@@ -58,21 +58,29 @@ public class LoaderCursor extends Activity {
         }
     }
 
-//BEGIN_INCLUDE(fragment_cursor)
+    //BEGIN_INCLUDE(fragment_cursor)
     public static class CursorLoaderListFragment extends ListFragment
             implements OnQueryTextListener, OnCloseListener,
             LoaderManager.LoaderCallbacks<Cursor> {
 
+        // These are the Contacts rows that we will retrieve.
+        static final String[] CONTACTS_SUMMARY_PROJECTION = new String[]{
+                Contacts._ID,
+                Contacts.DISPLAY_NAME,
+                Contacts.CONTACT_STATUS,
+                Contacts.CONTACT_PRESENCE,
+                Contacts.PHOTO_ID,
+                Contacts.LOOKUP_KEY,
+        };
         // This is the Adapter being used to display the list's data.
         SimpleCursorAdapter mAdapter;
-
         // The SearchView for doing filtering.
         SearchView mSearchView;
-
         // If non-null, this is the current filter the user has provided.
         String mCurFilter;
 
-        @Override public void onActivityCreated(Bundle savedInstanceState) {
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
 
             // Give some text to display if there is no data.  In a real
@@ -85,8 +93,8 @@ public class LoaderCursor extends Activity {
             // Create an empty adapter we will use to display the loaded data.
             mAdapter = new SimpleCursorAdapter(getActivity(),
                     android.R.layout.simple_list_item_2, null,
-                    new String[] { Contacts.DISPLAY_NAME, Contacts.CONTACT_STATUS },
-                    new int[] { android.R.id.text1, android.R.id.text2 }, 0);
+                    new String[]{Contacts.DISPLAY_NAME, Contacts.CONTACT_STATUS},
+                    new int[]{android.R.id.text1, android.R.id.text2}, 0);
             setListAdapter(mAdapter);
 
             // Start out with a progress indicator.
@@ -97,21 +105,8 @@ public class LoaderCursor extends Activity {
             getLoaderManager().initLoader(0, null, this);
         }
 
-        public static class MySearchView extends SearchView {
-            public MySearchView(Context context) {
-                super(context);
-            }
-
-            // The normal SearchView doesn't clear its search text when
-            // collapsed, so we will do this for it.
-            @Override
-            public void onActionViewCollapsed() {
-                setQuery("", false);
-                super.onActionViewCollapsed();
-            }
-        }
-
-        @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
             // Place an action bar item for searching.
             MenuItem item = menu.add("Search");
             item.setIcon(android.R.drawable.ic_menu_search);
@@ -142,7 +137,8 @@ public class LoaderCursor extends Activity {
             return true;
         }
 
-        @Override public boolean onQueryTextSubmit(String query) {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
             // Don't care about this.
             return true;
         }
@@ -155,20 +151,11 @@ public class LoaderCursor extends Activity {
             return true;
         }
 
-        @Override public void onListItemClick(ListView l, View v, int position, long id) {
+        @Override
+        public void onListItemClick(ListView l, View v, int position, long id) {
             // Insert desired behavior here.
             Log.i("FragmentComplexList", "Item clicked: " + id);
         }
-
-        // These are the Contacts rows that we will retrieve.
-        static final String[] CONTACTS_SUMMARY_PROJECTION = new String[] {
-            Contacts._ID,
-            Contacts.DISPLAY_NAME,
-            Contacts.CONTACT_STATUS,
-            Contacts.CONTACT_PRESENCE,
-            Contacts.PHOTO_ID,
-            Contacts.LOOKUP_KEY,
-        };
 
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             // This is called when a new Loader needs to be created.  This
@@ -211,6 +198,20 @@ public class LoaderCursor extends Activity {
             // above is about to be closed.  We need to make sure we are no
             // longer using it.
             mAdapter.swapCursor(null);
+        }
+
+        public static class MySearchView extends SearchView {
+            public MySearchView(Context context) {
+                super(context);
+            }
+
+            // The normal SearchView doesn't clear its search text when
+            // collapsed, so we will do this for it.
+            @Override
+            public void onActionViewCollapsed() {
+                setQuery("", false);
+                super.onActionViewCollapsed();
+            }
         }
     }
 //END_INCLUDE(fragment_cursor)

@@ -19,9 +19,9 @@ package com.example.android.apis.app;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
-import android.view.KeyEvent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 
 /**
  * This is an example implementation of the {@link android.app.Instrumentation}

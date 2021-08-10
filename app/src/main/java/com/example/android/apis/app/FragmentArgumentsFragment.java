@@ -16,8 +16,6 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -25,12 +23,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android.apis.R;
+
 /**
  * Demonstrates a fragment that can be configured through both Bundle arguments
  * and layout attributes.
  */
 public class FragmentArgumentsFragment extends Fragment {
-    @Override public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
@@ -44,8 +45,9 @@ public class FragmentArgumentsFragment extends Fragment {
         }
     }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_arguments_fragment, container, false);
         return v;
     }

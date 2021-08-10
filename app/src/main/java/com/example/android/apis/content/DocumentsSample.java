@@ -52,6 +52,27 @@ public class DocumentsSample extends Activity {
 
     private TextView mResult;
 
+    public static byte[] readFullyNoClose(InputStream in) throws IOException {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int count;
+        while ((count = in.read(buffer)) != -1) {
+            bytes.write(buffer, 0, count);
+        }
+        return bytes.toByteArray();
+    }
+
+    public static void closeQuietly(AutoCloseable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (RuntimeException rethrown) {
+                throw rethrown;
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -137,8 +158,8 @@ public class DocumentsSample extends Activity {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[] {
-                        "text/plain", "application/msword" });
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{
+                        "text/plain", "application/msword"});
                 if (multiple.isChecked()) {
                     intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                 }
@@ -290,8 +311,8 @@ public class DocumentsSample extends Activity {
                     DocumentsContract.getTreeDocumentId(uri));
             Uri child = DocumentsContract.buildChildDocumentsUriUsingTree(uri,
                     DocumentsContract.getTreeDocumentId(uri));
-            Cursor c = cr.query(child, new String[] {
-                    Document.COLUMN_DISPLAY_NAME, Document.COLUMN_MIME_TYPE }, null, null, null);
+            Cursor c = cr.query(child, new String[]{
+                    Document.COLUMN_DISPLAY_NAME, Document.COLUMN_MIME_TYPE}, null, null, null);
             try {
                 while (c.moveToNext()) {
                     log("found child=" + c.getString(0) + ", mime=" + c.getString(1));
@@ -354,26 +375,5 @@ public class DocumentsSample extends Activity {
     private void log(String msg, Throwable t) {
         Log.d(TAG, msg, t);
         mResult.setText(mResult.getText() + "\n" + msg);
-    }
-
-    public static byte[] readFullyNoClose(InputStream in) throws IOException {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int count;
-        while ((count = in.read(buffer)) != -1) {
-            bytes.write(buffer, 0, count);
-        }
-        return bytes.toByteArray();
-    }
-
-    public static void closeQuietly(AutoCloseable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (RuntimeException rethrown) {
-                throw rethrown;
-            } catch (Exception ignored) {
-            }
-        }
     }
 }

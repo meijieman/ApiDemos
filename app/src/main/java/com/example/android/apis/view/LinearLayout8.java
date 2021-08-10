@@ -18,14 +18,15 @@ package com.example.android.apis.view;
 
 //Need the following import to get access to the app resources, since this
 //class is in a sub-package.
-import com.example.android.apis.R;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
+
+import com.example.android.apis.R;
 
 
 /**
@@ -33,25 +34,22 @@ import android.widget.LinearLayout;
  */
 public class LinearLayout8 extends Activity {
 
-    private LinearLayout mLinearLayout;
-
     // Menu item Ids
     public static final int VERTICAL_ID = Menu.FIRST;
     public static final int HORIZONTAL_ID = Menu.FIRST + 1;
-
     public static final int TOP_ID = Menu.FIRST + 2;
     public static final int MIDDLE_ID = Menu.FIRST + 3;
     public static final int BOTTOM_ID = Menu.FIRST + 4;
-
     public static final int LEFT_ID = Menu.FIRST + 5;
     public static final int CENTER_ID = Menu.FIRST + 6;
     public static final int RIGHT_ID = Menu.FIRST + 7;
+    private LinearLayout mLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.linear_layout_8);
-        mLinearLayout = (LinearLayout)findViewById(R.id.layout);
+        mLinearLayout = (LinearLayout) findViewById(R.id.layout);
     }
 
     @Override
@@ -73,32 +71,32 @@ public class LinearLayout8 extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
-        case VERTICAL_ID:
-            mLinearLayout.setOrientation(LinearLayout.VERTICAL);
-            return true;
-        case HORIZONTAL_ID:
-            mLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-            return true;
+            case VERTICAL_ID:
+                mLinearLayout.setOrientation(LinearLayout.VERTICAL);
+                return true;
+            case HORIZONTAL_ID:
+                mLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+                return true;
 
-        case TOP_ID:
-            mLinearLayout.setVerticalGravity(Gravity.TOP);
-            return true;
-        case MIDDLE_ID:
-            mLinearLayout.setVerticalGravity(Gravity.CENTER_VERTICAL);
-            return true;
-        case BOTTOM_ID:
-            mLinearLayout.setVerticalGravity(Gravity.BOTTOM);
-            return true;
+            case TOP_ID:
+                mLinearLayout.setVerticalGravity(Gravity.TOP);
+                return true;
+            case MIDDLE_ID:
+                mLinearLayout.setVerticalGravity(Gravity.CENTER_VERTICAL);
+                return true;
+            case BOTTOM_ID:
+                mLinearLayout.setVerticalGravity(Gravity.BOTTOM);
+                return true;
 
-        case LEFT_ID:
-            mLinearLayout.setHorizontalGravity(Gravity.LEFT);
-            return true;
-        case CENTER_ID:
-            mLinearLayout.setHorizontalGravity(Gravity.CENTER_HORIZONTAL);
-            return true;
-        case RIGHT_ID:
-            mLinearLayout.setHorizontalGravity(Gravity.RIGHT);
-            return true;
+            case LEFT_ID:
+                mLinearLayout.setHorizontalGravity(Gravity.LEFT);
+                return true;
+            case CENTER_ID:
+                mLinearLayout.setHorizontalGravity(Gravity.CENTER_HORIZONTAL);
+                return true;
+            case RIGHT_ID:
+                mLinearLayout.setHorizontalGravity(Gravity.RIGHT);
+                return true;
 
         }
         return super.onOptionsItemSelected(item);

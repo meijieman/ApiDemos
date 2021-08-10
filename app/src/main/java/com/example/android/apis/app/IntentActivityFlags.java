@@ -1,7 +1,5 @@
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.PendingIntent.CanceledException;
@@ -14,10 +12,33 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.example.android.apis.R;
+
 /**
  * Example of various Intent flags to modify the activity stack.
  */
 public class IntentActivityFlags extends Activity {
+    private OnClickListener mFlagActivityClearTaskListener = new OnClickListener() {
+        public void onClick(View v) {
+            startActivities(buildIntentsToViewsLists());
+        }
+    };
+    private OnClickListener mFlagActivityClearTaskPIListener = new OnClickListener() {
+        public void onClick(View v) {
+            Context context = IntentActivityFlags.this;
+//BEGIN_INCLUDE(pending_intent)
+            PendingIntent pi = PendingIntent.getActivities(context, 0,
+                    buildIntentsToViewsLists(), PendingIntent.FLAG_UPDATE_CURRENT);
+//END_INCLUDE(pending_intent)
+            try {
+                pi.send();
+            } catch (CanceledException e) {
+                Log.w("IntentActivityFlags", "Failed sending PendingIntent", e);
+            }
+        }
+    };
+//END_INCLUDE(intent_array)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,9 +46,9 @@ public class IntentActivityFlags extends Activity {
         setContentView(R.layout.intent_activity_flags);
 
         // Watch for button clicks.
-        Button button = (Button)findViewById(R.id.flag_activity_clear_task);
+        Button button = (Button) findViewById(R.id.flag_activity_clear_task);
         button.setOnClickListener(mFlagActivityClearTaskListener);
-        button = (Button)findViewById(R.id.flag_activity_clear_task_pi);
+        button = (Button) findViewById(R.id.flag_activity_clear_task_pi);
         button.setOnClickListener(mFlagActivityClearTaskPIListener);
     }
 
@@ -61,26 +82,4 @@ public class IntentActivityFlags extends Activity {
         intents[2] = intent;
         return intents;
     }
-//END_INCLUDE(intent_array)
-
-    private OnClickListener mFlagActivityClearTaskListener = new OnClickListener() {
-        public void onClick(View v) {
-            startActivities(buildIntentsToViewsLists());
-        }
-    };
-
-    private OnClickListener mFlagActivityClearTaskPIListener = new OnClickListener() {
-        public void onClick(View v) {
-            Context context = IntentActivityFlags.this;
-//BEGIN_INCLUDE(pending_intent)
-            PendingIntent pi = PendingIntent.getActivities(context, 0,
-                    buildIntentsToViewsLists(), PendingIntent.FLAG_UPDATE_CURRENT);
-//END_INCLUDE(pending_intent)
-            try {
-                pi.send();
-            } catch (CanceledException e) {
-                Log.w("IntentActivityFlags", "Failed sending PendingIntent", e);
-            }
-        }
-    };
 }

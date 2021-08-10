@@ -18,9 +18,9 @@ package com.example.android.apis.view;
 
 import android.app.TabActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
-import android.view.LayoutInflater;
 
 import com.example.android.apis.R;
 
@@ -34,7 +34,7 @@ public class Tabs1 extends TabActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         TabHost tabHost = getTabHost();
-        
+
         LayoutInflater.from(this).inflate(R.layout.tabs1, tabHost.getTabContentView(), true);
 
         tabHost.addTab(tabHost.newTabSpec("tab1")

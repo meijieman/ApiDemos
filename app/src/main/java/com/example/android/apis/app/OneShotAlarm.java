@@ -16,13 +16,11 @@
 
 package com.example.android.apis.app;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.BroadcastReceiver;
 import android.widget.Toast;
 
-// Need the following import to get access to the app resources, since this
-// class is in a sub-package.
 import com.example.android.apis.R;
 
 /**
@@ -31,11 +29,9 @@ import com.example.android.apis.R;
  * <p>
  * When the alarm goes off, we show a <i>Toast</i>, a quick message.
  */
-public class OneShotAlarm extends BroadcastReceiver
-{
+public class OneShotAlarm extends BroadcastReceiver {
     @Override
-    public void onReceive(Context context, Intent intent)
-    {
+    public void onReceive(Context context, Intent intent) {
         Toast.makeText(context, R.string.one_shot_received, Toast.LENGTH_SHORT).show();
     }
 }

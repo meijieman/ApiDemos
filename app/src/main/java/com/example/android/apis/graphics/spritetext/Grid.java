@@ -25,9 +25,15 @@ import javax.microedition.khronos.opengles.GL10;
 
 /**
  * A 2D rectangular mesh. Can be drawn textured or untextured.
- *
  */
 class Grid {
+
+    private FloatBuffer mVertexBuffer;
+    private FloatBuffer mTexCoordBuffer;
+    private CharBuffer mIndexBuffer;
+    private int mW;
+    private int mH;
+    private int mIndexCount;
 
     public Grid(int w, int h) {
         if (w < 0 || w >= 65536) {
@@ -46,9 +52,9 @@ class Grid {
         final int FLOAT_SIZE = 4;
         final int CHAR_SIZE = 2;
         mVertexBuffer = ByteBuffer.allocateDirect(FLOAT_SIZE * size * 3)
-            .order(ByteOrder.nativeOrder()).asFloatBuffer();
+                .order(ByteOrder.nativeOrder()).asFloatBuffer();
         mTexCoordBuffer = ByteBuffer.allocateDirect(FLOAT_SIZE * size * 2)
-            .order(ByteOrder.nativeOrder()).asFloatBuffer();
+                .order(ByteOrder.nativeOrder()).asFloatBuffer();
 
         int quadW = mW - 1;
         int quadH = mH - 1;
@@ -56,7 +62,7 @@ class Grid {
         int indexCount = quadCount * 6;
         mIndexCount = indexCount;
         mIndexBuffer = ByteBuffer.allocateDirect(CHAR_SIZE * indexCount)
-            .order(ByteOrder.nativeOrder()).asCharBuffer();
+                .order(ByteOrder.nativeOrder()).asCharBuffer();
 
         /*
          * Initialize triangle list mesh.
@@ -129,12 +135,4 @@ class Grid {
                 GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
     }
-
-    private FloatBuffer mVertexBuffer;
-    private FloatBuffer mTexCoordBuffer;
-    private CharBuffer mIndexBuffer;
-
-    private int mW;
-    private int mH;
-    private int mIndexCount;
 }

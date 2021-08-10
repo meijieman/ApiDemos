@@ -16,16 +16,16 @@
 
 package com.example.android.apis.view;
 
-import com.example.android.apis.R;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android.apis.R;
+
 /**
  * This view is part of the {@link SecureView} demonstration activity.
- *
+ * <p>
  * This view is constructed in such a way as to obscure the buttons and descriptive
  * text of the activity in a poor attempt to fool the user into clicking on the buttons
  * despite the activity telling the user that they may be harmful.

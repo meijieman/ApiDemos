@@ -18,14 +18,15 @@ package com.example.android.apis.app;
 
 // Need the following import to get access to the app resources, since this
 // class is in a sub-package.
-import com.example.android.apis.R;
 
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.example.android.apis.R;
+
 /**
  * <h3>Wallpaper Activity</h3>
- * 
+ *
  * <p>This demonstrates the how to write an activity that has the system
  * wallpaper behind it.</p>
  */
@@ -39,7 +40,7 @@ public class WallpaperActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         // Be sure to call the super class.
         super.onCreate(savedInstanceState);
-        
+
         // See assets/res/any/layout/translucent_background.xml for this
         // view layout definition, which is being set here as
         // the content of our screen.

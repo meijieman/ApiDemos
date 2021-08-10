@@ -16,14 +16,9 @@
 
 package com.example.android.apis.content;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import android.content.ContentProvider;
-import android.content.ContentValues;
 import android.content.ContentProvider.PipeDataWriter;
+import android.content.ContentValues;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -32,6 +27,11 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 import android.util.Log;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * A very simple content provider that can serve arbitrary asset files from
@@ -46,7 +46,7 @@ public class FileProvider extends ContentProvider
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
-            String sortOrder) {
+                        String sortOrder) {
 
         // content providers that support open and openAssetFile should support queries for all
         // android.provider.OpenableColumns.
@@ -56,7 +56,7 @@ public class FileProvider extends ContentProvider
 
         // If projection is null, return all columns.
         if (projection == null) {
-            projection = new String[] {
+            projection = new String[]{
                     OpenableColumns.DISPLAY_NAME,
                     OpenableColumns.SIZE};
         }
@@ -116,11 +116,11 @@ public class FileProvider extends ContentProvider
         try {
             String path = uri.getPath();
             int off = path.indexOf('/', 1);
-            if (off < 0 || off >= (path.length()-1)) {
+            if (off < 0 || off >= (path.length() - 1)) {
                 throw new FileNotFoundException("Unable to open " + uri);
             }
             int cookie = Integer.parseInt(path.substring(1, off));
-            String assetPath = path.substring(off+1);
+            String assetPath = path.substring(off + 1);
             AssetFileDescriptor asset = getContext().getAssets().openNonAssetFd(cookie, assetPath);
             return new ParcelFileDescriptor(openPipeHelper(uri, null, null,
                     asset.createInputStream(), this));
@@ -132,13 +132,13 @@ public class FileProvider extends ContentProvider
 
     @Override
     public void writeDataToPipe(ParcelFileDescriptor output, Uri uri, String mimeType,
-            Bundle opts, InputStream args) {
+                                Bundle opts, InputStream args) {
         // Transfer data from the asset to the pipe the client is reading.
         byte[] buffer = new byte[8192];
         int n;
         FileOutputStream fout = new FileOutputStream(output.getFileDescriptor());
         try {
-            while ((n=args.read(buffer)) >= 0) {
+            while ((n = args.read(buffer)) >= 0) {
                 fout.write(buffer, 0, n);
             }
         } catch (IOException e) {

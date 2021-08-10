@@ -16,18 +16,15 @@
 
 package com.example.android.apis.os;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * A very simple content provider that can serve mms files from our cache directory so that
@@ -42,7 +39,7 @@ public class MmsFileProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
-            String sortOrder) {
+                        String sortOrder) {
         // Don't support queries.
         return null;
     }
@@ -75,9 +72,9 @@ public class MmsFileProvider extends ContentProvider {
     public ParcelFileDescriptor openFile(Uri uri, String fileMode) throws FileNotFoundException {
         File file = new File(getContext().getCacheDir(), uri.getPath());
         int mode = (TextUtils.equals(fileMode, "r") ? ParcelFileDescriptor.MODE_READ_ONLY :
-            ParcelFileDescriptor.MODE_WRITE_ONLY
-                   |ParcelFileDescriptor.MODE_TRUNCATE
-                   |ParcelFileDescriptor.MODE_CREATE);
+                ParcelFileDescriptor.MODE_WRITE_ONLY
+                        | ParcelFileDescriptor.MODE_TRUNCATE
+                        | ParcelFileDescriptor.MODE_CREATE);
         return ParcelFileDescriptor.open(file, mode);
     }
 }

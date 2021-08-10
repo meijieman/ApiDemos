@@ -18,10 +18,7 @@ package com.example.android.apis.app;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.Window;
-import android.widget.Toast;
+
 import com.example.android.apis.R;
 
 /**

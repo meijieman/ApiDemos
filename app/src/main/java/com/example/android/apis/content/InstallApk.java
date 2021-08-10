@@ -18,28 +18,21 @@ package com.example.android.apis.content;
 
 // Need the following import to get access to the app resources, since this
 // class is in a sub-package.
-import com.example.android.apis.R;
 
 import android.app.Activity;
-import android.content.ContentProvider;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ContentProvider.PipeDataWriter;
-import android.content.res.AssetFileDescriptor;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.apis.R;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,6 +44,53 @@ import java.io.InputStream;
 public class InstallApk extends Activity {
     static final int REQUEST_INSTALL = 1;
     static final int REQUEST_UNINSTALL = 2;
+    private OnClickListener mUnknownSourceListener = new OnClickListener() {
+        public void onClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+            intent.setData(Uri.fromFile(prepareApk("HelloActivity.apk")));
+            startActivity(intent);
+        }
+    };
+    private OnClickListener mMySourceListener = new OnClickListener() {
+        public void onClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+            intent.setData(Uri.fromFile(prepareApk("HelloActivity.apk")));
+            intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
+            intent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
+            intent.putExtra(Intent.EXTRA_INSTALLER_PACKAGE_NAME,
+                    getApplicationInfo().packageName);
+            startActivityForResult(intent, REQUEST_INSTALL);
+        }
+    };
+    private OnClickListener mReplaceListener = new OnClickListener() {
+        public void onClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+            intent.setData(Uri.fromFile(prepareApk("HelloActivity.apk")));
+            intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
+            intent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
+            intent.putExtra(Intent.EXTRA_ALLOW_REPLACE, true);
+            intent.putExtra(Intent.EXTRA_INSTALLER_PACKAGE_NAME,
+                    getApplicationInfo().packageName);
+            startActivityForResult(intent, REQUEST_INSTALL);
+        }
+    };
+    private OnClickListener mUninstallListener = new OnClickListener() {
+        public void onClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
+            intent.setData(Uri.parse(
+                    "package:com.example.android.helloactivity"));
+            startActivity(intent);
+        }
+    };
+    private OnClickListener mUninstallResultListener = new OnClickListener() {
+        public void onClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
+            intent.setData(Uri.parse(
+                    "package:com.example.android.helloactivity"));
+            intent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
+            startActivityForResult(intent, REQUEST_UNINSTALL);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,15 +99,15 @@ public class InstallApk extends Activity {
         setContentView(R.layout.install_apk);
 
         // Watch for button clicks.
-        Button button = (Button)findViewById(R.id.unknown_source);
+        Button button = (Button) findViewById(R.id.unknown_source);
         button.setOnClickListener(mUnknownSourceListener);
-        button = (Button)findViewById(R.id.my_source);
+        button = (Button) findViewById(R.id.my_source);
         button.setOnClickListener(mMySourceListener);
-        button = (Button)findViewById(R.id.replace);
+        button = (Button) findViewById(R.id.replace);
         button.setOnClickListener(mReplaceListener);
-        button = (Button)findViewById(R.id.uninstall);
+        button = (Button) findViewById(R.id.uninstall);
         button.setOnClickListener(mUninstallListener);
-        button = (Button)findViewById(R.id.uninstall_result);
+        button = (Button) findViewById(R.id.uninstall_result);
         button.setOnClickListener(mUninstallResultListener);
     }
 
@@ -92,58 +132,6 @@ public class InstallApk extends Activity {
         }
     }
 
-    private OnClickListener mUnknownSourceListener = new OnClickListener() {
-        public void onClick(View v) {
-            Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-            intent.setData(Uri.fromFile(prepareApk("HelloActivity.apk")));
-            startActivity(intent);
-        }
-    };
-
-    private OnClickListener mMySourceListener = new OnClickListener() {
-        public void onClick(View v) {
-            Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-            intent.setData(Uri.fromFile(prepareApk("HelloActivity.apk")));
-            intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
-            intent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
-            intent.putExtra(Intent.EXTRA_INSTALLER_PACKAGE_NAME,
-                    getApplicationInfo().packageName);
-            startActivityForResult(intent, REQUEST_INSTALL);
-        }
-    };
-
-    private OnClickListener mReplaceListener = new OnClickListener() {
-        public void onClick(View v) {
-            Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-            intent.setData(Uri.fromFile(prepareApk("HelloActivity.apk")));
-            intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
-            intent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
-            intent.putExtra(Intent.EXTRA_ALLOW_REPLACE, true);
-            intent.putExtra(Intent.EXTRA_INSTALLER_PACKAGE_NAME,
-                    getApplicationInfo().packageName);
-            startActivityForResult(intent, REQUEST_INSTALL);
-        }
-    };
-
-    private OnClickListener mUninstallListener = new OnClickListener() {
-        public void onClick(View v) {
-            Intent intent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
-            intent.setData(Uri.parse(
-                    "package:com.example.android.helloactivity"));
-            startActivity(intent);
-        }
-    };
-
-    private OnClickListener mUninstallResultListener = new OnClickListener() {
-        public void onClick(View v) {
-            Intent intent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
-            intent.setData(Uri.parse(
-                    "package:com.example.android.helloactivity"));
-            intent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
-            startActivityForResult(intent, REQUEST_UNINSTALL);
-        }
-    };
-
     private File prepareApk(String assetName) {
         // Copy the given asset out into a file so that it can be installed.
         // Returns the path to the file.
@@ -154,7 +142,7 @@ public class InstallApk extends Activity {
             is = getAssets().open(assetName);
             fout = openFileOutput("tmp.apk", Context.MODE_WORLD_READABLE);
             int n;
-            while ((n=is.read(buffer)) >= 0) {
+            while ((n = is.read(buffer)) >= 0) {
                 fout.write(buffer, 0, n);
             }
         } catch (IOException e) {

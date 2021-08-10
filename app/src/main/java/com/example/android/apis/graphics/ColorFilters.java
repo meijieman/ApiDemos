@@ -16,14 +16,20 @@
 
 package com.example.android.apis.graphics;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.*;
-import android.graphics.drawable.*;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.*;
+import android.view.MotionEvent;
+import android.view.View;
+
+import com.example.android.apis.R;
 
 public class ColorFilters extends GraphicsActivity {
 
@@ -45,16 +51,6 @@ public class ColorFilters extends GraphicsActivity {
         private PorterDuff.Mode[] mModes;
         private int mModeIndex;
 
-        private static void addToTheRight(Drawable curr, Drawable prev) {
-            Rect r = prev.getBounds();
-            int x = r.right + 12;
-            int center = (r.top + r.bottom) >> 1;
-            int h = curr.getIntrinsicHeight();
-            int y = center - (h >> 1);
-
-            curr.setBounds(x, y, x + curr.getIntrinsicWidth(), y + h);
-        }
-
         public SampleView(Activity activity) {
             super(activity);
             mActivity = activity;
@@ -65,10 +61,10 @@ public class ColorFilters extends GraphicsActivity {
             mDrawable.setBounds(0, 0, 150, 48);
             mDrawable.setDither(true);
 
-            int[] resIDs = new int[] {
-                R.drawable.btn_circle_normal,
-                R.drawable.btn_check_off,
-                R.drawable.btn_check_on
+            int[] resIDs = new int[]{
+                    R.drawable.btn_circle_normal,
+                    R.drawable.btn_check_off,
+                    R.drawable.btn_check_on
             };
             mDrawables = new Drawable[resIDs.length];
             Drawable prev = mDrawable;
@@ -90,23 +86,33 @@ public class ColorFilters extends GraphicsActivity {
             Paint.FontMetrics fm = mPaint.getFontMetrics();
             mPaintTextOffset = (fm.descent + fm.ascent) * 0.5f;
 
-            mColors = new int[] {
-                0,
-                0xCC0000FF,
-                0x880000FF,
-                0x440000FF,
-                0xFFCCCCFF,
-                0xFF8888FF,
-                0xFF4444FF,
+            mColors = new int[]{
+                    0,
+                    0xCC0000FF,
+                    0x880000FF,
+                    0x440000FF,
+                    0xFFCCCCFF,
+                    0xFF8888FF,
+                    0xFF4444FF,
             };
 
-            mModes = new PorterDuff.Mode[] {
-                PorterDuff.Mode.SRC_ATOP,
-                PorterDuff.Mode.MULTIPLY,
+            mModes = new PorterDuff.Mode[]{
+                    PorterDuff.Mode.SRC_ATOP,
+                    PorterDuff.Mode.MULTIPLY,
             };
             mModeIndex = 0;
 
             updateTitle();
+        }
+
+        private static void addToTheRight(Drawable curr, Drawable prev) {
+            Rect r = prev.getBounds();
+            int x = r.right + 12;
+            int center = (r.top + r.bottom) >> 1;
+            int h = curr.getIntrinsicHeight();
+            int y = center - (h >> 1);
+
+            curr.setBounds(x, y, x + curr.getIntrinsicWidth(), y + h);
         }
 
         private void swapPaintColors() {
@@ -131,7 +137,7 @@ public class ColorFilters extends GraphicsActivity {
 
             mDrawable.setColorFilter(filter);
             mDrawable.draw(canvas);
-            canvas.drawText("Label", x+1, y+1, mPaint2);
+            canvas.drawText("Label", x + 1, y + 1, mPaint2);
             canvas.drawText("Label", x, y, mPaint);
 
             for (Drawable dr : mDrawables) {
@@ -140,7 +146,8 @@ public class ColorFilters extends GraphicsActivity {
             }
         }
 
-        @Override protected void onDraw(Canvas canvas) {
+        @Override
+        protected void onDraw(Canvas canvas) {
             canvas.drawColor(0xFFCCCCCC);
 
             canvas.translate(8, 12);
@@ -150,7 +157,7 @@ public class ColorFilters extends GraphicsActivity {
                     filter = null;
                 } else {
                     filter = new PorterDuffColorFilter(color,
-                                                       mModes[mModeIndex]);
+                            mModes[mModeIndex]);
                 }
                 drawSample(canvas, filter);
                 canvas.translate(0, 55);

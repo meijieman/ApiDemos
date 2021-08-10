@@ -15,8 +15,6 @@
  */
 package com.example.android.apis.view;
 
-import com.example.android.apis.R;
-
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.ActionMode;
@@ -27,10 +25,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.android.apis.R;
+
 /**
  * This demo illustrates the use of CHOICE_MODE_MULTIPLE_MODAL, a.k.a. selection mode on ListView.
  */
 public class List15 extends ListActivity {
+    private String[] mStrings = Cheeses.sCheeseStrings;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,13 +42,13 @@ public class List15 extends ListActivity {
         setListAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_checked, mStrings));
     }
-    
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         getActionBar().setSubtitle("Long press to start selection");
     }
-    
+
     private class ModeCallback implements ListView.MultiChoiceModeListener {
 
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -63,15 +65,15 @@ public class List15 extends ListActivity {
 
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
-            case R.id.share:
-                Toast.makeText(List15.this, "Shared " + getListView().getCheckedItemCount() +
-                        " items", Toast.LENGTH_SHORT).show();
-                mode.finish();
-                break;
-            default:
-                Toast.makeText(List15.this, "Clicked " + item.getTitle(),
-                        Toast.LENGTH_SHORT).show();
-                break;
+                case R.id.share:
+                    Toast.makeText(List15.this, "Shared " + getListView().getCheckedItemCount() +
+                            " items", Toast.LENGTH_SHORT).show();
+                    mode.finish();
+                    break;
+                default:
+                    Toast.makeText(List15.this, "Clicked " + item.getTitle(),
+                            Toast.LENGTH_SHORT).show();
+                    break;
             }
             return true;
         }
@@ -80,7 +82,7 @@ public class List15 extends ListActivity {
         }
 
         public void onItemCheckedStateChanged(ActionMode mode,
-                int position, long id, boolean checked) {
+                                              int position, long id, boolean checked) {
             setSubtitle(mode);
         }
 
@@ -99,6 +101,4 @@ public class List15 extends ListActivity {
             }
         }
     }
-
-    private String[] mStrings = Cheeses.sCheeseStrings;
 }

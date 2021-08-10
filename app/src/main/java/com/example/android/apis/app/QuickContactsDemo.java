@@ -16,8 +16,6 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.ListActivity;
 import android.content.Context;
 import android.database.CharArrayBuffer;
@@ -30,8 +28,10 @@ import android.widget.QuickContactBadge;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
+import com.example.android.apis.R;
+
 public class QuickContactsDemo extends ListActivity {
-    static final String[] CONTACTS_SUMMARY_PROJECTION = new String[] {
+    static final String[] CONTACTS_SUMMARY_PROJECTION = new String[]{
             Contacts._ID, // 0
             Contacts.DISPLAY_NAME, // 1
             Contacts.STARRED, // 2
@@ -60,11 +60,17 @@ public class QuickContactsDemo extends ListActivity {
                 + Contacts.DISPLAY_NAME + " != '' ))";
         Cursor c =
                 getContentResolver().query(Contacts.CONTENT_URI, CONTACTS_SUMMARY_PROJECTION, select,
-                null, Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
+                        null, Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
         startManagingCursor(c);
         ContactListItemAdapter adapter = new ContactListItemAdapter(this, R.layout.quick_contacts, c);
         setListAdapter(adapter);
 
+    }
+
+    final static class ContactListItemCache {
+        public TextView nameView;
+        public QuickContactBadge photoView;
+        public CharArrayBuffer nameBuffer = new CharArrayBuffer(128);
     }
 
     private final class ContactListItemAdapter extends ResourceCursorAdapter {
@@ -94,11 +100,5 @@ public class QuickContactsDemo extends ListActivity {
 
             return view;
         }
-    }
-
-    final static class ContactListItemCache {
-        public TextView nameView;
-        public QuickContactBadge photoView;
-        public CharArrayBuffer nameBuffer = new CharArrayBuffer(128);
     }
 }

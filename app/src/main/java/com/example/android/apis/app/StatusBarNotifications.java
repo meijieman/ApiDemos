@@ -16,8 +16,6 @@
 
 package com.example.android.apis.app;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -29,15 +27,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RemoteViews;
 
+import com.example.android.apis.R;
+
 /**
  * Demonstrates adding notifications to the status bar
  */
 public class StatusBarNotifications extends Activity {
 
-    private NotificationManager mNotificationManager;
-
     // Use our layout id for a unique identifier
     private static int MOOD_NOTIFICATIONS = R.layout.status_bar_notifications;
+    private NotificationManager mNotificationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,28 +114,28 @@ public class StatusBarNotifications extends Activity {
                 setMoodView(R.drawable.stat_sad, R.string.status_bar_notifications_sad_message);
             }
         });
-        
+
         button = (Button) findViewById(R.id.defaultSound);
         button.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 setDefault(Notification.DEFAULT_SOUND);
             }
         });
-        
+
         button = (Button) findViewById(R.id.defaultVibrate);
         button.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 setDefault(Notification.DEFAULT_VIBRATE);
             }
         });
-        
+
         button = (Button) findViewById(R.id.defaultAll);
         button.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 setDefault(Notification.DEFAULT_ALL);
             }
         });
-        
+
         button = (Button) findViewById(R.id.clear);
         button.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
@@ -155,8 +154,8 @@ public class StatusBarNotifications extends Activity {
                 PendingIntent.FLAG_UPDATE_CURRENT);
         return contentIntent;
     }
-    
-//BEGIN_INCLUDE(intent_array)
+
+    //BEGIN_INCLUDE(intent_array)
     private PendingIntent makeDefaultIntent() {
         // A typical convention for notifications is to launch the user deeply
         // into an application representing the data in the notification; to
@@ -242,7 +241,7 @@ public class StatusBarNotifications extends Activity {
         // notification
         mNotificationManager.notify(MOOD_NOTIFICATIONS, notif);
     }
-    
+
     private void setDefault(int defaults) {
 
         // This is who should be launched if the user selects our notification.
@@ -267,7 +266,7 @@ public class StatusBarNotifications extends Activity {
 
         mNotificationManager.notify(
                 MOOD_NOTIFICATIONS, // we use a string id because it is a unique
-                                    // number.  we use it later to cancel the notification
+                // number.  we use it later to cancel the notification
                 notification);
-    }    
+    }
 }

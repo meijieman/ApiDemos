@@ -25,8 +25,6 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-// Need the following import to get access to the app resources, since this
-// class is in a sub-package.
 import com.example.android.apis.R;
 
 /**
@@ -48,6 +46,25 @@ public class ExampleAppWidgetProvider extends AppWidgetProvider {
     // log tag
     private static final String TAG = "ExampleAppWidgetProvider";
 
+    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+                                int appWidgetId, String titlePrefix) {
+        Log.d(TAG, "updateAppWidget appWidgetId=" + appWidgetId + " titlePrefix=" + titlePrefix);
+        // Getting the string this way allows the string to be localized.  The format
+        // string is filled in using java.util.Formatter-style format strings.
+        CharSequence text = context.getString(R.string.appwidget_text_format,
+                ExampleAppWidgetConfigure.loadTitlePref(context, appWidgetId),
+                "0x" + Long.toHexString(SystemClock.elapsedRealtime()));
+
+        // Construct the RemoteViews object.  It takes the package name (in our case, it's our
+        // package, but it needs this because on the other side it's the widget host inflating
+        // the layout from our package).
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.appwidget_provider);
+        views.setTextViewText(R.id.appwidget_text, text);
+
+        // Tell the widget manager
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         Log.d(TAG, "onUpdate");
@@ -56,19 +73,19 @@ public class ExampleAppWidgetProvider extends AppWidgetProvider {
         //   - Set the text in the RemoteViews object
         //   - Tell the AppWidgetManager to show that views object for the widget.
         final int N = appWidgetIds.length;
-        for (int i=0; i<N; i++) {
+        for (int i = 0; i < N; i++) {
             int appWidgetId = appWidgetIds[i];
             String titlePrefix = ExampleAppWidgetConfigure.loadTitlePref(context, appWidgetId);
             updateAppWidget(context, appWidgetManager, appWidgetId, titlePrefix);
         }
     }
-    
+
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         Log.d(TAG, "onDeleted");
         // When the user deletes the widget, delete the preference associated with it.
         final int N = appWidgetIds.length;
-        for (int i=0; i<N; i++) {
+        for (int i = 0; i < N; i++) {
             ExampleAppWidgetConfigure.deleteTitlePref(context, appWidgetIds[i]);
         }
     }
@@ -97,25 +114,6 @@ public class ExampleAppWidgetProvider extends AppWidgetProvider {
                 new ComponentName("com.example.android.apis", ".appwidget.ExampleBroadcastReceiver"),
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP);
-    }
-
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-            int appWidgetId, String titlePrefix) {
-        Log.d(TAG, "updateAppWidget appWidgetId=" + appWidgetId + " titlePrefix=" + titlePrefix);
-        // Getting the string this way allows the string to be localized.  The format
-        // string is filled in using java.util.Formatter-style format strings.
-        CharSequence text = context.getString(R.string.appwidget_text_format,
-                ExampleAppWidgetConfigure.loadTitlePref(context, appWidgetId),
-                "0x" + Long.toHexString(SystemClock.elapsedRealtime()));
-
-        // Construct the RemoteViews object.  It takes the package name (in our case, it's our
-        // package, but it needs this because on the other side it's the widget host inflating
-        // the layout from our package).
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.appwidget_provider);
-        views.setTextViewText(R.id.appwidget_text, text);
-
-        // Tell the widget manager
-        appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 }
 

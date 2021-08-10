@@ -16,13 +16,13 @@
 
 package com.example.android.apis.view;
 
-import com.example.android.apis.R;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.DragEvent;
 import android.view.View;
 import android.widget.TextView;
+
+import com.example.android.apis.R;
 
 public class DragAndDropDemo extends Activity {
     TextView mResultText;
@@ -54,7 +54,8 @@ public class DragAndDropDemo extends Activity {
                         // is properly notified about the ongoing drag, and lights up
                         // to indicate that it can handle the current content.
                         mHiddenDot.setVisibility(View.VISIBLE);
-                    } break;
+                    }
+                    break;
 
                     case DragEvent.ACTION_DRAG_ENDED: {
                         // Hide the surprise again
@@ -63,7 +64,8 @@ public class DragAndDropDemo extends Activity {
                         // Report the drop/no-drop result to the user
                         final boolean dropped = event.getResult();
                         mResultText.setText(dropped ? "Dropped!" : "No drop");
-                    } break;
+                    }
+                    break;
                 }
                 return false;
             }

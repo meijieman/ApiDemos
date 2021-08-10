@@ -25,6 +25,8 @@ import android.os.Bundle;
  * that uses OpenGL drawing into a dedicated surface.
  */
 public class GLSurfaceViewActivity extends Activity {
+    private GLSurfaceView mGLSurfaceView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +53,4 @@ public class GLSurfaceViewActivity extends Activity {
         super.onPause();
         mGLSurfaceView.onPause();
     }
-
-    private GLSurfaceView mGLSurfaceView;
 }
