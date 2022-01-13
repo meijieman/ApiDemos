@@ -21,6 +21,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Shader;
@@ -46,13 +47,16 @@ public class Vertices extends GraphicsActivity {
 
         private final Matrix mMatrix = new Matrix();
         private final Matrix mInverse = new Matrix();
+        private float[] mPt;
+        private Paint gridPaint;
 
         public SampleView(Context context) {
             super(context);
             setFocusable(true);
 
             Bitmap bm = BitmapFactory.decodeResource(getResources(),
-                    R.drawable.beach);
+                    R.drawable.beach).copy(Bitmap.Config.ARGB_8888, true);
+            addGridLine(bm);
             Shader s = new BitmapShader(bm, Shader.TileMode.CLAMP,
                     Shader.TileMode.CLAMP);
             mPaint.setShader(s);
@@ -77,6 +81,27 @@ public class Vertices extends GraphicsActivity {
             mMatrix.invert(mInverse);
         }
 
+        // 添加网格
+        void addGridLine(Bitmap bitmap) {
+            gridPaint = new Paint();
+            gridPaint.setStrokeWidth(1);
+            gridPaint.setColor(Color.RED);
+            gridPaint.setAntiAlias(true);
+
+            Canvas canvas = new Canvas(bitmap);
+            int width = bitmap.getWidth();
+            int count = 20;
+            int distance = width / count;
+            int height = bitmap.getHeight();
+            int distanceY = height / count;
+            for (int i = 0; i < count; i++) {
+                canvas.drawLine(distance * i, 0, distance * i, height, gridPaint);
+            }
+            for (int i = 0; i < count; i++) {
+                canvas.drawLine(0, distanceY * i, width, distanceY * i, gridPaint);
+            }
+        }
+
         private static void setXY(float[] array, int index, float x, float y) {
             array[index * 2 + 0] = x;
             array[index * 2 + 1] = y;
@@ -91,18 +116,26 @@ public class Vertices extends GraphicsActivity {
             canvas.drawVertices(Canvas.VertexMode.TRIANGLE_FAN, 10, mVerts, 0,
                     mTexs, 0, null, 0, null, 0, 0, mPaint);
 
-            canvas.translate(0, 240);
+            canvas.translate(0, 640);
             canvas.drawVertices(Canvas.VertexMode.TRIANGLE_FAN, 10, mVerts, 0,
                     mTexs, 0, null, 0, mIndices, 0, 6, mPaint);
 
             canvas.restore();
+
+            if (mPt != null) {
+                canvas.drawCircle(mPt[0], mPt[1], 20, gridPaint);
+            }
         }
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-            float[] pt = {event.getX(), event.getY()};
-            mInverse.mapPoints(pt);
-            setXY(mVerts, 0, pt[0], pt[1]);
+            mPt = new float[]{event.getX(), event.getY()};
+            mInverse.mapPoints(mPt);
+//            float[] tmp = new float[2];
+//            tmp[0] = mPt[0] + 200;
+//            tmp[1] = mPt[1] + 200;
+//            mInverse.mapPoints(tmp);
+            setXY(mVerts, 0, mPt[0], mPt[1]);
             invalidate();
             return true;
         }

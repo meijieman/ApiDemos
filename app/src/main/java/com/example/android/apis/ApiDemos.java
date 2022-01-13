@@ -50,6 +50,8 @@ public class ApiDemos extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+//        startActivity(new Intent(this, Vertices.class));
+
         Intent intent = getIntent();
         String path = intent.getStringExtra("com.example.android.apis.Path");
         if (path == null) {

@@ -60,8 +60,8 @@ public class BitmapDecode extends GraphicsActivity {
             BitmapFactory.Options opts = new BitmapFactory.Options();
             Bitmap bm;
 
-            opts.inJustDecodeBounds = true;
-            bm = BitmapFactory.decodeStream(is, null, opts);
+//            opts.inJustDecodeBounds = true;
+//            bm = BitmapFactory.decodeStream(is, null, opts);
 
             // now opts.outWidth and opts.outHeight are the dimension of the
             // bitmap, even though bm is null
